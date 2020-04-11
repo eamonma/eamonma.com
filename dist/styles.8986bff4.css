@@ -1,0 +1,170 @@
+body {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-family: 'Noto Serif', serif;
+    background-color: #F7F4EA;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+main {
+    margin-top: -10%;
+}
+
+h1 {
+    font-size: 2em;
+    color: #32312F;
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #32312F;
+}
+
+.social ul>li {
+    margin: 0 1em;
+}
+
+.social ul>li,
+.social ul>li>a {
+    display: block;
+    height: 3.9em;
+    width: 2.8em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.social ul>li>a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.social ul>li>a::after {
+    font-size: .8em;
+    position: absolute;
+    bottom: -.5em;
+    display: block;
+    transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    opacity: 0;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+}
+
+.social ul>li>a:hover::after {
+    opacity: 1;
+}
+
+.github a {
+    background-image: url("/github.23c538a5.png");
+}
+
+.github a::after {
+    content: "GitHub";
+}
+
+.email a {
+    background-image: url("/email.5c30934f.png");
+}
+
+.email a::after {
+    content: "Email";
+}
+
+.instagram a {
+    background-image: url("/instagram.77044c70.png");
+}
+
+.instagram a::after {
+    content: "Instagram";
+}
+
+.linkedin a {
+    background-image: url("/linkedin.90c4945d.png");
+}
+
+.linkedin a::after {
+    content: "LinkedIn";
+}
+
+footer {
+    position: absolute;
+    bottom: 2em;
+    font-size: 0.8em;
+}
+
+@media (hover: hover) {
+    .social ul>li>a:hover {
+        transform: scale(1.1);
+    }
+
+}
+
+@media (hover: none),
+(max-width: 600px) {
+    body {
+        font-size: 110%;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 0;
+    }
+
+    .social ul>li>a::after {
+        opacity: 1;
+    }
+
+    main,
+    .social,
+    .social ul {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .social ul {
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .social ul>li {
+        margin: 1.4em 0;
+        flex: 0 50%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .social ul>li,
+    .social ul>li>a {
+        width: 3em;
+        height: 4em;
+    }
+
+    .social ul>li>a::after {
+        bottom: -1em;
+    }
+}
+
+/*# sourceMappingURL=/styles.8986bff4.css.map */
