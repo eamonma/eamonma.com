@@ -1,7 +1,7 @@
 .alex {
     max-width: 500px;
-    font-family: "Comic Sans MS";
-    margin-bottom: 25px;
+    font-family: "Comic Sans MS", cursive;
+    margin: -10px 10px;
 }
 
 .alex>* {
