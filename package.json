@@ -13,8 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "animate.css": "^3.7.2",
+    "konami": "^1.6.2",
     "konami-js": "0.0.2",
     "konami.js": "^1.0.0",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "typed.js": "^2.0.11"
   }
 }

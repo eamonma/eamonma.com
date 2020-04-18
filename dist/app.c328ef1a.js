@@ -117,1037 +117,1229 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/keyboard-code/index.js":[function(require,module,exports) {
-function KeyboardCode(code, success){
-    this.code = code || [];
-    this.success = success || function(){};
-    this.codeIndex = 0;
+})({"node_modules/konami/konami.js":[function(require,module,exports) {
+var define;
+/*
+ * Konami-JS ~
+ * :: Now with support for touch events and multiple instances for
+ * :: those situations that call for multiple easter eggs!
+ * Code: https://github.com/snaptortoise/konami-js
+ * Copyright (c) 2009 George Mandis (georgemandis.com, snaptortoise.com)
+ * Version: 1.6.2 (7/17/2018)
+ * Licensed under the MIT License (http://opensource.org/licenses/MIT)
+ * Tested in: Safari 4+, Google Chrome 4+, Firefox 3+, IE7+, Mobile Safari 2.2.1+ and Android
+ */
 
-    if(window.addEventListener) {
-        window.addEventListener("keyup", this.checkCode.bind(this), false);
-    } else {
-        window.attachEvent("onkeyup", this.checkCode.bind(this));
-    }
-}
-
-KeyboardCode.prototype.checkCode = function checkCode(event){
-    if(event.keyCode === this.code[this.codeIndex++]){
-        if(this.codeIndex === this.code.length){
-            this.success();
-            this.codeIndex = 0;
-        }
-    }else{
-        this.codeIndex = 0;
-    }
-};
-
-module.exports = KeyboardCode;
-},{}],"node_modules/konami-keyboard/index.js":[function(require,module,exports) {
-var konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13],
-    KeyboardCode = require('keyboard-code');
-
-function KonamiKeyboard(success){
-    KeyboardCode.call(this, konamiCode, success || function(){});
-}
-
-KonamiKeyboard.prototype = Object.create(KeyboardCode.prototype);
-KonamiKeyboard.prototype.constructor = KonamiKeyboard;
-
-module.exports = KonamiKeyboard;
-},{"keyboard-code":"node_modules/keyboard-code/index.js"}],"node_modules/interact-js/interact.js":[function(require,module,exports) {
-var interactions = [],
-    minMoveDistance = 5,
-    interact,
-    maximumMovesToPersist = 1000, // Should be plenty..
-    propertiesToCopy = 'target,pageX,pageY,clientX,clientY,offsetX,offsetY,screenX,screenY,shiftKey,x,y'.split(','); // Stuff that will be on every interaction.
-
-function Interact(){
-    this._elements = [];
-}
-Interact.prototype.on = function(eventName, target, callback){
-    if(!target){
-        return;
-    }
-    target._interactEvents = target._interactEvents || {};
-    target._interactEvents[eventName] = target._interactEvents[eventName] || []
-    target._interactEvents[eventName].push({
-        callback: callback,
-        interact: this
-    });
-
-    return this;
-};
-Interact.prototype.emit = function(eventName, target, event, interaction){
-    if(!target){
-        return;
-    }
-
-    var interact = this,
-        currentTarget = target;
-
-    interaction.originalEvent = event;
-    interaction.preventDefault = function(){
-        event.preventDefault();
-    }
-    interaction.stopPropagation = function(){
-        event.stopPropagation();
-    }
-
-    while(currentTarget){
-        currentTarget._interactEvents &&
-        currentTarget._interactEvents[eventName] &&
-        currentTarget._interactEvents[eventName].forEach(function(listenerInfo){
-            if(listenerInfo.interact === interact){
-                listenerInfo.callback.call(interaction, interaction);
-            }
-        });
-        currentTarget = currentTarget.parentNode;
-    }
-
-    return this;
-};
-Interact.prototype.off =
-Interact.prototype.removeListener = function(eventName, target, callback){
-    if(!target || !target._interactEvents || !target._interactEvents[eventName]){
-        return;
-    }
-    var interactListeners = target._interactEvents[eventName],
-        listenerInfo;
-    for(var i = 0; i < interactListeners.length; i++) {
-        listenerInfo = interactListeners[i];
-        if(listenerInfo.interact === interact && listenerInfo.callback === callback){
-            interactListeners.splice(i,1);
-            i--;
-        }
-    }
-
-    return this;
-};
-interact = new Interact();
-
-    // For some reason touch browsers never change the event target during a touch.
-    // This is, lets face it, fucking stupid.
-function getActualTarget() {
-    var scrollX = window.scrollX,
-        scrollY = window.scrollY;
-
-    // IE is stupid and doesn't support scrollX/Y
-    if(scrollX === undefined){
-        scrollX = document.body.scrollLeft;
-        scrollY = document.body.scrollTop;
-    }
-
-    return document.elementFromPoint(this.pageX - window.scrollX, this.pageY - window.scrollY);
-}
-
-function getMoveDistance(x1,y1,x2,y2){
-    var adj = Math.abs(x1 - x2),
-        opp = Math.abs(y1 - y2);
-
-    return Math.sqrt(Math.pow(adj,2) + Math.pow(opp,2));
-}
-
-function destroyInteraction(interaction){
-    for(var i = 0; i < interactions.length; i++){
-        if(interactions[i].identifier === interaction.identifier){
-            interactions.splice(i,1);
-        }
-    }
-}
-
-function getInteraction(identifier){
-    for(var i = 0; i < interactions.length; i++){
-        if(interactions[i].identifier === identifier){
-            return interactions[i];
-        }
-    }
-}
-
-function setInheritedData(interaction, data){
-    for(var i = 0; i < propertiesToCopy.length; i++) {
-        interaction[propertiesToCopy[i]] = data[propertiesToCopy[i]]
-    }
-}
-
-function Interaction(event, interactionInfo){
-    // If there is no event (eg: desktop) just make the identifier undefined
-    if(!event){
-        event = {};
-    }
-    // If there is no extra info about the interaction (eg: desktop) just use the event itself
-    if(!interactionInfo){
-        interactionInfo = event;
-    }
-
-    // If there is another interaction with the same ID, something went wrong.
-    // KILL IT WITH FIRE!
-    var oldInteraction = getInteraction(interactionInfo.identifier);
-    oldInteraction && oldInteraction.destroy();
-
-    this.identifier = interactionInfo.identifier;
-
-    this.moves = [];
-
-    interactions.push(this);
-}
-
-Interaction.prototype = {
-    constructor: Interaction,
-    getActualTarget: getActualTarget,
-    destroy: function(){
-        interact.on('destroy', this.target, this, this);
-        destroyInteraction(this);
-    },
-    start: function(event, interactionInfo){
-        // If there is no extra info about the interaction (eg: desktop) just use the event itself
-        if(!interactionInfo){
-            interactionInfo = event;
-        }
-
-        var lastStart = {
-                time: new Date()
-            };
-        setInheritedData(lastStart, interactionInfo);
-        this.lastStart = lastStart;
-
-        setInheritedData(this, interactionInfo);
-
-        interact.emit('start', event.target, event, this);
-        return this;
-    },
-    move: function(event, interactionInfo){
-        // If there is no extra info about the interaction (eg: desktop) just use the event itself
-        if(!interactionInfo){
-            interactionInfo = event;
-        }
-
-        var currentTouch = {
-                time: new Date()
-            };
-
-        setInheritedData(currentTouch, interactionInfo);
-
-        // Update the interaction
-        setInheritedData(this, interactionInfo);
-
-        this.moves.push(currentTouch);
-
-        // Memory saver, culls any moves that are over the maximum to keep.
-        this.moves = this.moves.slice(-maximumMovesToPersist);
-
-        var lastMove = this.moves[this.moves.length-2];
-        lastMove && (currentTouch.angle = Math.atan2(currentTouch.pageY - lastMove.pageY, currentTouch.pageX - lastMove.pageX) * 180 / Math.PI);
-        this.angle = currentTouch.angle || 0;
-
-        interact.emit('move', event.target, event, this);
-        return this;
-    },
-    drag: function(event, interactionInfo){
-        // If there is no extra info about the interaction (eg: desktop) just use the event itself
-        if(!interactionInfo){
-            interactionInfo = event;
-        }
-
-        var currentTouch = {
-                time: new Date(),
-                isDrag: true
-            };
-
-        setInheritedData(currentTouch, interactionInfo);
-
-        // Update the interaction
-        setInheritedData(this, interactionInfo);
-
-        if(!this.moves){
-            this.moves = [];
-        }
-
-        this.moves.push(currentTouch);
-
-        // Memory saver, culls any moves that are over the maximum to keep.
-        this.moves = this.moves.slice(-maximumMovesToPersist);
-
-        if(!this.dragStarted && getMoveDistance(this.lastStart.pageX, this.lastStart.pageY, currentTouch.pageX, currentTouch.pageY) > minMoveDistance){
-            this.dragStarted = true;
-        }
-
-        var lastDrag = this.moves[this.moves.length-2] || this.lastStart;
-        lastDrag && (currentTouch.angle = Math.atan2(currentTouch.pageY - lastDrag.pageY, currentTouch.pageX - lastDrag.pageX) * 180 / Math.PI);
-        this.angle = currentTouch.angle || 0;
-
-        if(this.dragStarted){
-            interact.emit('drag', event.target, event, this);
-        }
-        return this;
-    },
-    end: function(event, interactionInfo){
-        if(!interactionInfo){
-            interactionInfo = event;
-        }
-
-        // Update the interaction
-        setInheritedData(this, interactionInfo);
-
-        interact.emit('end', event.target, event, this);
-
-        return this;
-    },
-    cancel: function(event, interactionInfo){
-        if(!interactionInfo){
-            interactionInfo = event;
-        }
-
-        // Update the interaction
-        setInheritedData(this, interactionInfo);
-
-        interact.emit('cancel', event.target, event, this);
-
-        return this;
-    },
-    getMoveDistance: function(){
-        if(this.moves.length > 1){
-            var current = this.moves[this.moves.length-1],
-                previous = this.moves[this.moves.length-2];
-
-            return getMoveDistance(current.pageX, current.pageY, previous.pageX, previous.pageY);
-        }
-    },
-    getMoveDelta: function(){
-        if(this.moves.length > 1){
-            var current = this.moves[this.moves.length-1],
-                previous = this.moves[this.moves.length-2];
-
-            return {
-                x: current.pageX - previous.pageX,
-                y: current.pageY - previous.pageY
-            };
-        }
-    },
-    getSpeed: function(){
-        if(this.moves.length > 1){
-            var current = this.moves[this.moves.length-1],
-                previous = this.moves[this.moves.length-2];
-
-            return this.getMoveDistance() / (current.time - previous.time);
-        }
-        return 0;
-    },
-    getCurrentAngle: function(blend){
-        var currentPosition,
-            lastAngle,
-            i = this.moves.length-1,
-            angle,
-            firstAngle,
-            angles = [],
-            blendSteps = 20/(this.getSpeed()*2+1),
-            stepsUsed = 0;
-
-        if(this.moves && this.moves.length){
-
-            currentPosition = this.moves[i];
-            angle = firstAngle = currentPosition.angle;
-
-            if(blend && this.moves.length > 1){
-                while(--i > 0 && this.moves.length - i < blendSteps){
-                    lastAngle = this.moves[i].angle;
-                    if(Math.abs(lastAngle - firstAngle) > 180){
-                        angle -= lastAngle
-                    }else{
-                        angle += lastAngle
-                    }
-                    stepsUsed++;
+var Konami = function (callback) {
+    var konami = {
+        addEvent: function (obj, type, fn, ref_obj) {
+            if (obj.addEventListener)
+                obj.addEventListener(type, fn, false);
+            else if (obj.attachEvent) {
+                // IE
+                obj["e" + type + fn] = fn;
+                obj[type + fn] = function () {
+                    obj["e" + type + fn](window.event, ref_obj);
                 }
-                angle = angle/stepsUsed;
+                obj.attachEvent("on" + type, obj[type + fn]);
+            }
+        },
+        removeEvent: function (obj, eventName, eventCallback) {
+            if (obj.removeEventListener) {
+                obj.removeEventListener(eventName, eventCallback);
+            } else if (obj.attachEvent) {
+                obj.detachEvent(eventName);
+            }
+        },
+        input: "",
+        pattern: "38384040373937396665",
+        keydownHandler: function (e, ref_obj) {
+            if (ref_obj) {
+                konami = ref_obj;
+            } // IE
+            konami.input += e ? e.keyCode : event.keyCode;
+            if (konami.input.length > konami.pattern.length) {
+                konami.input = konami.input.substr((konami.input.length - konami.pattern.length));
+            }
+            if (konami.input === konami.pattern) {
+                konami.code(konami._currentLink);
+                konami.input = '';
+                e.preventDefault();
+                return false;
+            }
+        },
+        load: function (link) {
+            this._currentLink = link;
+            this.addEvent(document, "keydown", this.keydownHandler, this);
+            this.iphone.load(link);
+        },
+        unload: function () {
+            this.removeEvent(document, 'keydown', this.keydownHandler);
+            this.iphone.unload();
+        },
+        code: function (link) {
+            window.location = link
+        },
+        iphone: {
+            start_x: 0,
+            start_y: 0,
+            stop_x: 0,
+            stop_y: 0,
+            tap: false,
+            capture: false,
+            orig_keys: "",
+            keys: ["UP", "UP", "DOWN", "DOWN", "LEFT", "RIGHT", "LEFT", "RIGHT", "TAP", "TAP"],
+            input: [],
+            code: function (link) {
+                konami.code(link);
+            },
+            touchmoveHandler: function (e) {
+                if (e.touches.length === 1 && konami.iphone.capture === true) {
+                    var touch = e.touches[0];
+                    konami.iphone.stop_x = touch.pageX;
+                    konami.iphone.stop_y = touch.pageY;
+                    konami.iphone.tap = false;
+                    konami.iphone.capture = false;
+                    konami.iphone.check_direction();
+                }
+            },
+            touchendHandler: function () {
+                konami.iphone.input.push(konami.iphone.check_direction());
+                
+                if (konami.iphone.input.length > konami.iphone.keys.length) konami.iphone.input.shift();
+                
+                if (konami.iphone.input.length === konami.iphone.keys.length) {
+                    var match = true;
+                    for (var i = 0; i < konami.iphone.keys.length; i++) {
+                        if (konami.iphone.input[i] !== konami.iphone.keys[i]) {
+                            match = false;
+                        }
+                    }
+                    if (match) {
+                        konami.iphone.code(konami._currentLink);
+                    }
+                }
+            },
+            touchstartHandler: function (e) {
+                konami.iphone.start_x = e.changedTouches[0].pageX;
+                konami.iphone.start_y = e.changedTouches[0].pageY;
+                konami.iphone.tap = true;
+                konami.iphone.capture = true;
+            },
+            load: function (link) {
+                this.orig_keys = this.keys;
+                konami.addEvent(document, "touchmove", this.touchmoveHandler);
+                konami.addEvent(document, "touchend", this.touchendHandler, false);
+                konami.addEvent(document, "touchstart", this.touchstartHandler);
+            },
+            unload: function () {
+                konami.removeEvent(document, 'touchmove', this.touchmoveHandler);
+                konami.removeEvent(document, 'touchend', this.touchendHandler);
+                konami.removeEvent(document, 'touchstart', this.touchstartHandler);
+            },
+            check_direction: function () {
+                x_magnitude = Math.abs(this.start_x - this.stop_x);
+                y_magnitude = Math.abs(this.start_y - this.stop_y);
+                x = ((this.start_x - this.stop_x) < 0) ? "RIGHT" : "LEFT";
+                y = ((this.start_y - this.stop_y) < 0) ? "DOWN" : "UP";
+                result = (x_magnitude > y_magnitude) ? x : y;
+                result = (this.tap === true) ? "TAP" : result;
+                return result;
             }
         }
-        return angle;
-    },
-    getAllInteractions: function(){
-        return interactions.slice();
     }
+
+    typeof callback === "string" && konami.load(callback);
+    if (typeof callback === "function") {
+        konami.code = callback;
+        konami.load();
+    }
+
+    return konami;
 };
 
-function start(event){
-    var touch;
 
-    for(var i = 0; i < event.changedTouches.length; i++){
-        touch = event.changedTouches[i];
-        new Interaction(event, event.changedTouches[i]).start(event, touch);
-    }
-}
-function drag(event){
-    var touch;
-
-    for(var i = 0; i < event.changedTouches.length; i++){
-        touch = event.changedTouches[i];
-        getInteraction(touch.identifier).drag(event, touch);
-    }
-}
-function end(event){
-    var touch;
-
-    for(var i = 0; i < event.changedTouches.length; i++){
-        touch = event.changedTouches[i];
-        getInteraction(touch.identifier).end(event, touch).destroy();
-    }
-}
-function cancel(event){
-    var touch;
-
-    for(var i = 0; i < event.changedTouches.length; i++){
-        touch = event.changedTouches[i];
-        getInteraction(touch.identifier).cancel(event, touch).destroy();
-    }
-}
-
-addEvent(document, 'touchstart', start);
-addEvent(document, 'touchmove', drag);
-addEvent(document, 'touchend', end);
-addEvent(document, 'touchcancel', cancel);
-
-var mouseIsDown = false;
-addEvent(document, 'mousedown', function(event){
-    mouseIsDown = true;
-    if(!interactions.length){
-        new Interaction(event);
-    }
-    getInteraction().start(event);
-});
-addEvent(document, 'mousemove', function(event){
-    if(!interactions.length){
-        new Interaction(event);
-    }
-    var interaction = getInteraction();
-    if(!interaction){
-        return;
-    }
-    if(mouseIsDown){
-        interaction.drag(event);
-    }else{
-        interaction.move(event);
-    }
-});
-addEvent(document, 'mouseup', function(event){
-    mouseIsDown = false;
-    var interaction = getInteraction();
-    if(!interaction){
-        return;
-    }
-    interaction.end(event, null);
-});
-
-function addEvent(element, type, callback) {
-    if(element.addEventListener){
-        element.addEventListener(type, callback);
-    }
-    else if(document.attachEvent){
-        element.attachEvent("on"+ type, callback);
-    }
-}
-
-module.exports = interact;
-},{}],"node_modules/events/events.js":[function(require,module,exports) {
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-'use strict';
-
-var R = typeof Reflect === 'object' ? Reflect : null;
-var ReflectApply = R && typeof R.apply === 'function' ? R.apply : function ReflectApply(target, receiver, args) {
-  return Function.prototype.apply.call(target, receiver, args);
-};
-var ReflectOwnKeys;
-
-if (R && typeof R.ownKeys === 'function') {
-  ReflectOwnKeys = R.ownKeys;
-} else if (Object.getOwnPropertySymbols) {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target));
-  };
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+        module.exports = Konami;
 } else {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target);
-  };
+        if (typeof define === 'function' && define.amd) {
+                define([], function() {
+                        return Konami;
+                });
+        } else {
+                window.Konami = Konami;
+        }
 }
 
-function ProcessEmitWarning(warning) {
-  if (console && console.warn) console.warn(warning);
-}
+},{}],"node_modules/typed.js/lib/typed.js":[function(require,module,exports) {
+var define;
+/*!
+ * 
+ *   typed.js - A JavaScript Typing Animation Library
+ *   Author: Matt Boldt <me@mattboldt.com>
+ *   Version: v2.0.11
+ *   Url: https://github.com/mattboldt/typed.js
+ *   License(s): MIT
+ * 
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Typed"] = factory();
+	else
+		root["Typed"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
-  return value !== value;
-};
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var _initializerJs = __webpack_require__(1);
+	
+	var _htmlParserJs = __webpack_require__(3);
+	
+	/**
+	 * Welcome to Typed.js!
+	 * @param {string} elementId HTML element ID _OR_ HTML element
+	 * @param {object} options options object
+	 * @returns {object} a new Typed object
+	 */
+	
+	var Typed = (function () {
+	  function Typed(elementId, options) {
+	    _classCallCheck(this, Typed);
+	
+	    // Initialize it up
+	    _initializerJs.initializer.load(this, options, elementId);
+	    // All systems go!
+	    this.begin();
+	  }
+	
+	  /**
+	   * Toggle start() and stop() of the Typed instance
+	   * @public
+	   */
+	
+	  _createClass(Typed, [{
+	    key: 'toggle',
+	    value: function toggle() {
+	      this.pause.status ? this.start() : this.stop();
+	    }
+	
+	    /**
+	     * Stop typing / backspacing and enable cursor blinking
+	     * @public
+	     */
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      if (this.typingComplete) return;
+	      if (this.pause.status) return;
+	      this.toggleBlinking(true);
+	      this.pause.status = true;
+	      this.options.onStop(this.arrayPos, this);
+	    }
+	
+	    /**
+	     * Start typing / backspacing after being stopped
+	     * @public
+	     */
+	  }, {
+	    key: 'start',
+	    value: function start() {
+	      if (this.typingComplete) return;
+	      if (!this.pause.status) return;
+	      this.pause.status = false;
+	      if (this.pause.typewrite) {
+	        this.typewrite(this.pause.curString, this.pause.curStrPos);
+	      } else {
+	        this.backspace(this.pause.curString, this.pause.curStrPos);
+	      }
+	      this.options.onStart(this.arrayPos, this);
+	    }
+	
+	    /**
+	     * Destroy this instance of Typed
+	     * @public
+	     */
+	  }, {
+	    key: 'destroy',
+	    value: function destroy() {
+	      this.reset(false);
+	      this.options.onDestroy(this);
+	    }
+	
+	    /**
+	     * Reset Typed and optionally restarts
+	     * @param {boolean} restart
+	     * @public
+	     */
+	  }, {
+	    key: 'reset',
+	    value: function reset() {
+	      var restart = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+	
+	      clearInterval(this.timeout);
+	      this.replaceText('');
+	      if (this.cursor && this.cursor.parentNode) {
+	        this.cursor.parentNode.removeChild(this.cursor);
+	        this.cursor = null;
+	      }
+	      this.strPos = 0;
+	      this.arrayPos = 0;
+	      this.curLoop = 0;
+	      if (restart) {
+	        this.insertCursor();
+	        this.options.onReset(this);
+	        this.begin();
+	      }
+	    }
+	
+	    /**
+	     * Begins the typing animation
+	     * @private
+	     */
+	  }, {
+	    key: 'begin',
+	    value: function begin() {
+	      var _this = this;
+	
+	      this.options.onBegin(this);
+	      this.typingComplete = false;
+	      this.shuffleStringsIfNeeded(this);
+	      this.insertCursor();
+	      if (this.bindInputFocusEvents) this.bindFocusEvents();
+	      this.timeout = setTimeout(function () {
+	        // Check if there is some text in the element, if yes start by backspacing the default message
+	        if (!_this.currentElContent || _this.currentElContent.length === 0) {
+	          _this.typewrite(_this.strings[_this.sequence[_this.arrayPos]], _this.strPos);
+	        } else {
+	          // Start typing
+	          _this.backspace(_this.currentElContent, _this.currentElContent.length);
+	        }
+	      }, this.startDelay);
+	    }
+	
+	    /**
+	     * Called for each character typed
+	     * @param {string} curString the current string in the strings array
+	     * @param {number} curStrPos the current position in the curString
+	     * @private
+	     */
+	  }, {
+	    key: 'typewrite',
+	    value: function typewrite(curString, curStrPos) {
+	      var _this2 = this;
+	
+	      if (this.fadeOut && this.el.classList.contains(this.fadeOutClass)) {
+	        this.el.classList.remove(this.fadeOutClass);
+	        if (this.cursor) this.cursor.classList.remove(this.fadeOutClass);
+	      }
+	
+	      var humanize = this.humanizer(this.typeSpeed);
+	      var numChars = 1;
+	
+	      if (this.pause.status === true) {
+	        this.setPauseStatus(curString, curStrPos, true);
+	        return;
+	      }
+	
+	      // contain typing function in a timeout humanize'd delay
+	      this.timeout = setTimeout(function () {
+	        // skip over any HTML chars
+	        curStrPos = _htmlParserJs.htmlParser.typeHtmlChars(curString, curStrPos, _this2);
+	
+	        var pauseTime = 0;
+	        var substr = curString.substr(curStrPos);
+	        // check for an escape character before a pause value
+	        // format: \^\d+ .. eg: ^1000 .. should be able to print the ^ too using ^^
+	        // single ^ are removed from string
+	        if (substr.charAt(0) === '^') {
+	          if (/^\^\d+/.test(substr)) {
+	            var skip = 1; // skip at least 1
+	            substr = /\d+/.exec(substr)[0];
+	            skip += substr.length;
+	            pauseTime = parseInt(substr);
+	            _this2.temporaryPause = true;
+	            _this2.options.onTypingPaused(_this2.arrayPos, _this2);
+	            // strip out the escape character and pause value so they're not printed
+	            curString = curString.substring(0, curStrPos) + curString.substring(curStrPos + skip);
+	            _this2.toggleBlinking(true);
+	          }
+	        }
+	
+	        // check for skip characters formatted as
+	        // "this is a `string to print NOW` ..."
+	        if (substr.charAt(0) === '`') {
+	          while (curString.substr(curStrPos + numChars).charAt(0) !== '`') {
+	            numChars++;
+	            if (curStrPos + numChars > curString.length) break;
+	          }
+	          // strip out the escape characters and append all the string in between
+	          var stringBeforeSkip = curString.substring(0, curStrPos);
+	          var stringSkipped = curString.substring(stringBeforeSkip.length + 1, curStrPos + numChars);
+	          var stringAfterSkip = curString.substring(curStrPos + numChars + 1);
+	          curString = stringBeforeSkip + stringSkipped + stringAfterSkip;
+	          numChars--;
+	        }
+	
+	        // timeout for any pause after a character
+	        _this2.timeout = setTimeout(function () {
+	          // Accounts for blinking while paused
+	          _this2.toggleBlinking(false);
+	
+	          // We're done with this sentence!
+	          if (curStrPos >= curString.length) {
+	            _this2.doneTyping(curString, curStrPos);
+	          } else {
+	            _this2.keepTyping(curString, curStrPos, numChars);
+	          }
+	          // end of character pause
+	          if (_this2.temporaryPause) {
+	            _this2.temporaryPause = false;
+	            _this2.options.onTypingResumed(_this2.arrayPos, _this2);
+	          }
+	        }, pauseTime);
+	
+	        // humanized value for typing
+	      }, humanize);
+	    }
+	
+	    /**
+	     * Continue to the next string & begin typing
+	     * @param {string} curString the current string in the strings array
+	     * @param {number} curStrPos the current position in the curString
+	     * @private
+	     */
+	  }, {
+	    key: 'keepTyping',
+	    value: function keepTyping(curString, curStrPos, numChars) {
+	      // call before functions if applicable
+	      if (curStrPos === 0) {
+	        this.toggleBlinking(false);
+	        this.options.preStringTyped(this.arrayPos, this);
+	      }
+	      // start typing each new char into existing string
+	      // curString: arg, this.el.html: original text inside element
+	      curStrPos += numChars;
+	      var nextString = curString.substr(0, curStrPos);
+	      this.replaceText(nextString);
+	      // loop the function
+	      this.typewrite(curString, curStrPos);
+	    }
+	
+	    /**
+	     * We're done typing the current string
+	     * @param {string} curString the current string in the strings array
+	     * @param {number} curStrPos the current position in the curString
+	     * @private
+	     */
+	  }, {
+	    key: 'doneTyping',
+	    value: function doneTyping(curString, curStrPos) {
+	      var _this3 = this;
+	
+	      // fires callback function
+	      this.options.onStringTyped(this.arrayPos, this);
+	      this.toggleBlinking(true);
+	      // is this the final string
+	      if (this.arrayPos === this.strings.length - 1) {
+	        // callback that occurs on the last typed string
+	        this.complete();
+	        // quit if we wont loop back
+	        if (this.loop === false || this.curLoop === this.loopCount) {
+	          return;
+	        }
+	      }
+	      this.timeout = setTimeout(function () {
+	        _this3.backspace(curString, curStrPos);
+	      }, this.backDelay);
+	    }
+	
+	    /**
+	     * Backspaces 1 character at a time
+	     * @param {string} curString the current string in the strings array
+	     * @param {number} curStrPos the current position in the curString
+	     * @private
+	     */
+	  }, {
+	    key: 'backspace',
+	    value: function backspace(curString, curStrPos) {
+	      var _this4 = this;
+	
+	      if (this.pause.status === true) {
+	        this.setPauseStatus(curString, curStrPos, true);
+	        return;
+	      }
+	      if (this.fadeOut) return this.initFadeOut();
+	
+	      this.toggleBlinking(false);
+	      var humanize = this.humanizer(this.backSpeed);
+	
+	      this.timeout = setTimeout(function () {
+	        curStrPos = _htmlParserJs.htmlParser.backSpaceHtmlChars(curString, curStrPos, _this4);
+	        // replace text with base text + typed characters
+	        var curStringAtPosition = curString.substr(0, curStrPos);
+	        _this4.replaceText(curStringAtPosition);
+	
+	        // if smartBack is enabled
+	        if (_this4.smartBackspace) {
+	          // the remaining part of the current string is equal of the same part of the new string
+	          var nextString = _this4.strings[_this4.arrayPos + 1];
+	          if (nextString && curStringAtPosition === nextString.substr(0, curStrPos)) {
+	            _this4.stopNum = curStrPos;
+	          } else {
+	            _this4.stopNum = 0;
+	          }
+	        }
+	
+	        // if the number (id of character in current string) is
+	        // less than the stop number, keep going
+	        if (curStrPos > _this4.stopNum) {
+	          // subtract characters one by one
+	          curStrPos--;
+	          // loop the function
+	          _this4.backspace(curString, curStrPos);
+	        } else if (curStrPos <= _this4.stopNum) {
+	          // if the stop number has been reached, increase
+	          // array position to next string
+	          _this4.arrayPos++;
+	          // When looping, begin at the beginning after backspace complete
+	          if (_this4.arrayPos === _this4.strings.length) {
+	            _this4.arrayPos = 0;
+	            _this4.options.onLastStringBackspaced();
+	            _this4.shuffleStringsIfNeeded();
+	            _this4.begin();
+	          } else {
+	            _this4.typewrite(_this4.strings[_this4.sequence[_this4.arrayPos]], curStrPos);
+	          }
+	        }
+	        // humanized value for typing
+	      }, humanize);
+	    }
+	
+	    /**
+	     * Full animation is complete
+	     * @private
+	     */
+	  }, {
+	    key: 'complete',
+	    value: function complete() {
+	      this.options.onComplete(this);
+	      if (this.loop) {
+	        this.curLoop++;
+	      } else {
+	        this.typingComplete = true;
+	      }
+	    }
+	
+	    /**
+	     * Has the typing been stopped
+	     * @param {string} curString the current string in the strings array
+	     * @param {number} curStrPos the current position in the curString
+	     * @param {boolean} isTyping
+	     * @private
+	     */
+	  }, {
+	    key: 'setPauseStatus',
+	    value: function setPauseStatus(curString, curStrPos, isTyping) {
+	      this.pause.typewrite = isTyping;
+	      this.pause.curString = curString;
+	      this.pause.curStrPos = curStrPos;
+	    }
+	
+	    /**
+	     * Toggle the blinking cursor
+	     * @param {boolean} isBlinking
+	     * @private
+	     */
+	  }, {
+	    key: 'toggleBlinking',
+	    value: function toggleBlinking(isBlinking) {
+	      if (!this.cursor) return;
+	      // if in paused state, don't toggle blinking a 2nd time
+	      if (this.pause.status) return;
+	      if (this.cursorBlinking === isBlinking) return;
+	      this.cursorBlinking = isBlinking;
+	      if (isBlinking) {
+	        this.cursor.classList.add('typed-cursor--blink');
+	      } else {
+	        this.cursor.classList.remove('typed-cursor--blink');
+	      }
+	    }
+	
+	    /**
+	     * Speed in MS to type
+	     * @param {number} speed
+	     * @private
+	     */
+	  }, {
+	    key: 'humanizer',
+	    value: function humanizer(speed) {
+	      return Math.round(Math.random() * speed / 2) + speed;
+	    }
+	
+	    /**
+	     * Shuffle the sequence of the strings array
+	     * @private
+	     */
+	  }, {
+	    key: 'shuffleStringsIfNeeded',
+	    value: function shuffleStringsIfNeeded() {
+	      if (!this.shuffle) return;
+	      this.sequence = this.sequence.sort(function () {
+	        return Math.random() - 0.5;
+	      });
+	    }
+	
+	    /**
+	     * Adds a CSS class to fade out current string
+	     * @private
+	     */
+	  }, {
+	    key: 'initFadeOut',
+	    value: function initFadeOut() {
+	      var _this5 = this;
+	
+	      this.el.className += ' ' + this.fadeOutClass;
+	      if (this.cursor) this.cursor.className += ' ' + this.fadeOutClass;
+	      return setTimeout(function () {
+	        _this5.arrayPos++;
+	        _this5.replaceText('');
+	
+	        // Resets current string if end of loop reached
+	        if (_this5.strings.length > _this5.arrayPos) {
+	          _this5.typewrite(_this5.strings[_this5.sequence[_this5.arrayPos]], 0);
+	        } else {
+	          _this5.typewrite(_this5.strings[0], 0);
+	          _this5.arrayPos = 0;
+	        }
+	      }, this.fadeOutDelay);
+	    }
+	
+	    /**
+	     * Replaces current text in the HTML element
+	     * depending on element type
+	     * @param {string} str
+	     * @private
+	     */
+	  }, {
+	    key: 'replaceText',
+	    value: function replaceText(str) {
+	      if (this.attr) {
+	        this.el.setAttribute(this.attr, str);
+	      } else {
+	        if (this.isInput) {
+	          this.el.value = str;
+	        } else if (this.contentType === 'html') {
+	          this.el.innerHTML = str;
+	        } else {
+	          this.el.textContent = str;
+	        }
+	      }
+	    }
+	
+	    /**
+	     * If using input elements, bind focus in order to
+	     * start and stop the animation
+	     * @private
+	     */
+	  }, {
+	    key: 'bindFocusEvents',
+	    value: function bindFocusEvents() {
+	      var _this6 = this;
+	
+	      if (!this.isInput) return;
+	      this.el.addEventListener('focus', function (e) {
+	        _this6.stop();
+	      });
+	      this.el.addEventListener('blur', function (e) {
+	        if (_this6.el.value && _this6.el.value.length !== 0) {
+	          return;
+	        }
+	        _this6.start();
+	      });
+	    }
+	
+	    /**
+	     * On init, insert the cursor element
+	     * @private
+	     */
+	  }, {
+	    key: 'insertCursor',
+	    value: function insertCursor() {
+	      if (!this.showCursor) return;
+	      if (this.cursor) return;
+	      this.cursor = document.createElement('span');
+	      this.cursor.className = 'typed-cursor';
+	      this.cursor.innerHTML = this.cursorChar;
+	      this.el.parentNode && this.el.parentNode.insertBefore(this.cursor, this.el.nextSibling);
+	    }
+	  }]);
+	
+	  return Typed;
+	})();
+	
+	exports['default'] = Typed;
+	module.exports = exports['default'];
 
-function EventEmitter() {
-  EventEmitter.init.call(this);
-}
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = EventEmitter; // Backwards-compat with node 0.10.x
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var _defaultsJs = __webpack_require__(2);
+	
+	var _defaultsJs2 = _interopRequireDefault(_defaultsJs);
+	
+	/**
+	 * Initialize the Typed object
+	 */
+	
+	var Initializer = (function () {
+	  function Initializer() {
+	    _classCallCheck(this, Initializer);
+	  }
+	
+	  _createClass(Initializer, [{
+	    key: 'load',
+	
+	    /**
+	     * Load up defaults & options on the Typed instance
+	     * @param {Typed} self instance of Typed
+	     * @param {object} options options object
+	     * @param {string} elementId HTML element ID _OR_ instance of HTML element
+	     * @private
+	     */
+	
+	    value: function load(self, options, elementId) {
+	      // chosen element to manipulate text
+	      if (typeof elementId === 'string') {
+	        self.el = document.querySelector(elementId);
+	      } else {
+	        self.el = elementId;
+	      }
+	
+	      self.options = _extends({}, _defaultsJs2['default'], options);
+	
+	      // attribute to type into
+	      self.isInput = self.el.tagName.toLowerCase() === 'input';
+	      self.attr = self.options.attr;
+	      self.bindInputFocusEvents = self.options.bindInputFocusEvents;
+	
+	      // show cursor
+	      self.showCursor = self.isInput ? false : self.options.showCursor;
+	
+	      // custom cursor
+	      self.cursorChar = self.options.cursorChar;
+	
+	      // Is the cursor blinking
+	      self.cursorBlinking = true;
+	
+	      // text content of element
+	      self.elContent = self.attr ? self.el.getAttribute(self.attr) : self.el.textContent;
+	
+	      // html or plain text
+	      self.contentType = self.options.contentType;
+	
+	      // typing speed
+	      self.typeSpeed = self.options.typeSpeed;
+	
+	      // add a delay before typing starts
+	      self.startDelay = self.options.startDelay;
+	
+	      // backspacing speed
+	      self.backSpeed = self.options.backSpeed;
+	
+	      // only backspace what doesn't match the previous string
+	      self.smartBackspace = self.options.smartBackspace;
+	
+	      // amount of time to wait before backspacing
+	      self.backDelay = self.options.backDelay;
+	
+	      // Fade out instead of backspace
+	      self.fadeOut = self.options.fadeOut;
+	      self.fadeOutClass = self.options.fadeOutClass;
+	      self.fadeOutDelay = self.options.fadeOutDelay;
+	
+	      // variable to check whether typing is currently paused
+	      self.isPaused = false;
+	
+	      // input strings of text
+	      self.strings = self.options.strings.map(function (s) {
+	        return s.trim();
+	      });
+	
+	      // div containing strings
+	      if (typeof self.options.stringsElement === 'string') {
+	        self.stringsElement = document.querySelector(self.options.stringsElement);
+	      } else {
+	        self.stringsElement = self.options.stringsElement;
+	      }
+	
+	      if (self.stringsElement) {
+	        self.strings = [];
+	        self.stringsElement.style.display = 'none';
+	        var strings = Array.prototype.slice.apply(self.stringsElement.children);
+	        var stringsLength = strings.length;
+	
+	        if (stringsLength) {
+	          for (var i = 0; i < stringsLength; i += 1) {
+	            var stringEl = strings[i];
+	            self.strings.push(stringEl.innerHTML.trim());
+	          }
+	        }
+	      }
+	
+	      // character number position of current string
+	      self.strPos = 0;
+	
+	      // current array position
+	      self.arrayPos = 0;
+	
+	      // index of string to stop backspacing on
+	      self.stopNum = 0;
+	
+	      // Looping logic
+	      self.loop = self.options.loop;
+	      self.loopCount = self.options.loopCount;
+	      self.curLoop = 0;
+	
+	      // shuffle the strings
+	      self.shuffle = self.options.shuffle;
+	      // the order of strings
+	      self.sequence = [];
+	
+	      self.pause = {
+	        status: false,
+	        typewrite: true,
+	        curString: '',
+	        curStrPos: 0
+	      };
+	
+	      // When the typing is complete (when not looped)
+	      self.typingComplete = false;
+	
+	      // Set the order in which the strings are typed
+	      for (var i in self.strings) {
+	        self.sequence[i] = i;
+	      }
+	
+	      // If there is some text in the element
+	      self.currentElContent = this.getCurrentElContent(self);
+	
+	      self.autoInsertCss = self.options.autoInsertCss;
+	
+	      this.appendAnimationCss(self);
+	    }
+	  }, {
+	    key: 'getCurrentElContent',
+	    value: function getCurrentElContent(self) {
+	      var elContent = '';
+	      if (self.attr) {
+	        elContent = self.el.getAttribute(self.attr);
+	      } else if (self.isInput) {
+	        elContent = self.el.value;
+	      } else if (self.contentType === 'html') {
+	        elContent = self.el.innerHTML;
+	      } else {
+	        elContent = self.el.textContent;
+	      }
+	      return elContent;
+	    }
+	  }, {
+	    key: 'appendAnimationCss',
+	    value: function appendAnimationCss(self) {
+	      var cssDataName = 'data-typed-js-css';
+	      if (!self.autoInsertCss) {
+	        return;
+	      }
+	      if (!self.showCursor && !self.fadeOut) {
+	        return;
+	      }
+	      if (document.querySelector('[' + cssDataName + ']')) {
+	        return;
+	      }
+	
+	      var css = document.createElement('style');
+	      css.type = 'text/css';
+	      css.setAttribute(cssDataName, true);
+	
+	      var innerCss = '';
+	      if (self.showCursor) {
+	        innerCss += '\n        .typed-cursor{\n          opacity: 1;\n        }\n        .typed-cursor.typed-cursor--blink{\n          animation: typedjsBlink 0.7s infinite;\n          -webkit-animation: typedjsBlink 0.7s infinite;\n                  animation: typedjsBlink 0.7s infinite;\n        }\n        @keyframes typedjsBlink{\n          50% { opacity: 0.0; }\n        }\n        @-webkit-keyframes typedjsBlink{\n          0% { opacity: 1; }\n          50% { opacity: 0.0; }\n          100% { opacity: 1; }\n        }\n      ';
+	      }
+	      if (self.fadeOut) {
+	        innerCss += '\n        .typed-fade-out{\n          opacity: 0;\n          transition: opacity .25s;\n        }\n        .typed-cursor.typed-cursor--blink.typed-fade-out{\n          -webkit-animation: 0;\n          animation: 0;\n        }\n      ';
+	      }
+	      if (css.length === 0) {
+	        return;
+	      }
+	      css.innerHTML = innerCss;
+	      document.body.appendChild(css);
+	    }
+	  }]);
+	
+	  return Initializer;
+	})();
+	
+	exports['default'] = Initializer;
+	var initializer = new Initializer();
+	exports.initializer = initializer;
 
-EventEmitter.EventEmitter = EventEmitter;
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._eventsCount = 0;
-EventEmitter.prototype._maxListeners = undefined; // By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-var defaultMaxListeners = 10;
+	/**
+	 * Defaults & options
+	 * @returns {object} Typed defaults & options
+	 * @public
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	var defaults = {
+	  /**
+	   * @property {array} strings strings to be typed
+	   * @property {string} stringsElement ID of element containing string children
+	   */
+	  strings: ['These are the default values...', 'You know what you should do?', 'Use your own!', 'Have a great day!'],
+	  stringsElement: null,
+	
+	  /**
+	   * @property {number} typeSpeed type speed in milliseconds
+	   */
+	  typeSpeed: 0,
+	
+	  /**
+	   * @property {number} startDelay time before typing starts in milliseconds
+	   */
+	  startDelay: 0,
+	
+	  /**
+	   * @property {number} backSpeed backspacing speed in milliseconds
+	   */
+	  backSpeed: 0,
+	
+	  /**
+	   * @property {boolean} smartBackspace only backspace what doesn't match the previous string
+	   */
+	  smartBackspace: true,
+	
+	  /**
+	   * @property {boolean} shuffle shuffle the strings
+	   */
+	  shuffle: false,
+	
+	  /**
+	   * @property {number} backDelay time before backspacing in milliseconds
+	   */
+	  backDelay: 700,
+	
+	  /**
+	   * @property {boolean} fadeOut Fade out instead of backspace
+	   * @property {string} fadeOutClass css class for fade animation
+	   * @property {boolean} fadeOutDelay Fade out delay in milliseconds
+	   */
+	  fadeOut: false,
+	  fadeOutClass: 'typed-fade-out',
+	  fadeOutDelay: 500,
+	
+	  /**
+	   * @property {boolean} loop loop strings
+	   * @property {number} loopCount amount of loops
+	   */
+	  loop: false,
+	  loopCount: Infinity,
+	
+	  /**
+	   * @property {boolean} showCursor show cursor
+	   * @property {string} cursorChar character for cursor
+	   * @property {boolean} autoInsertCss insert CSS for cursor and fadeOut into HTML <head>
+	   */
+	  showCursor: true,
+	  cursorChar: '|',
+	  autoInsertCss: true,
+	
+	  /**
+	   * @property {string} attr attribute for typing
+	   * Ex: input placeholder, value, or just HTML text
+	   */
+	  attr: null,
+	
+	  /**
+	   * @property {boolean} bindInputFocusEvents bind to focus and blur if el is text input
+	   */
+	  bindInputFocusEvents: false,
+	
+	  /**
+	   * @property {string} contentType 'html' or 'null' for plaintext
+	   */
+	  contentType: 'html',
+	
+	  /**
+	   * Before it begins typing
+	   * @param {Typed} self
+	   */
+	  onBegin: function onBegin(self) {},
+	
+	  /**
+	   * All typing is complete
+	   * @param {Typed} self
+	   */
+	  onComplete: function onComplete(self) {},
+	
+	  /**
+	   * Before each string is typed
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  preStringTyped: function preStringTyped(arrayPos, self) {},
+	
+	  /**
+	   * After each string is typed
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  onStringTyped: function onStringTyped(arrayPos, self) {},
+	
+	  /**
+	   * During looping, after last string is typed
+	   * @param {Typed} self
+	   */
+	  onLastStringBackspaced: function onLastStringBackspaced(self) {},
+	
+	  /**
+	   * Typing has been stopped
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  onTypingPaused: function onTypingPaused(arrayPos, self) {},
+	
+	  /**
+	   * Typing has been started after being stopped
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  onTypingResumed: function onTypingResumed(arrayPos, self) {},
+	
+	  /**
+	   * After reset
+	   * @param {Typed} self
+	   */
+	  onReset: function onReset(self) {},
+	
+	  /**
+	   * After stop
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  onStop: function onStop(arrayPos, self) {},
+	
+	  /**
+	   * After start
+	   * @param {number} arrayPos
+	   * @param {Typed} self
+	   */
+	  onStart: function onStart(arrayPos, self) {},
+	
+	  /**
+	   * After destroy
+	   * @param {Typed} self
+	   */
+	  onDestroy: function onDestroy(self) {}
+	};
+	
+	exports['default'] = defaults;
+	module.exports = exports['default'];
 
-function checkListener(listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
-}
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
 
-Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
-  enumerable: true,
-  get: function () {
-    return defaultMaxListeners;
-  },
-  set: function (arg) {
-    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
-      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
-    }
+	/**
+	 * TODO: These methods can probably be combined somehow
+	 * Parse HTML tags & HTML Characters
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var HTMLParser = (function () {
+	  function HTMLParser() {
+	    _classCallCheck(this, HTMLParser);
+	  }
+	
+	  _createClass(HTMLParser, [{
+	    key: 'typeHtmlChars',
+	
+	    /**
+	     * Type HTML tags & HTML Characters
+	     * @param {string} curString Current string
+	     * @param {number} curStrPos Position in current string
+	     * @param {Typed} self instance of Typed
+	     * @returns {number} a new string position
+	     * @private
+	     */
+	
+	    value: function typeHtmlChars(curString, curStrPos, self) {
+	      if (self.contentType !== 'html') return curStrPos;
+	      var curChar = curString.substr(curStrPos).charAt(0);
+	      if (curChar === '<' || curChar === '&') {
+	        var endTag = '';
+	        if (curChar === '<') {
+	          endTag = '>';
+	        } else {
+	          endTag = ';';
+	        }
+	        while (curString.substr(curStrPos + 1).charAt(0) !== endTag) {
+	          curStrPos++;
+	          if (curStrPos + 1 > curString.length) {
+	            break;
+	          }
+	        }
+	        curStrPos++;
+	      }
+	      return curStrPos;
+	    }
+	
+	    /**
+	     * Backspace HTML tags and HTML Characters
+	     * @param {string} curString Current string
+	     * @param {number} curStrPos Position in current string
+	     * @param {Typed} self instance of Typed
+	     * @returns {number} a new string position
+	     * @private
+	     */
+	  }, {
+	    key: 'backSpaceHtmlChars',
+	    value: function backSpaceHtmlChars(curString, curStrPos, self) {
+	      if (self.contentType !== 'html') return curStrPos;
+	      var curChar = curString.substr(curStrPos).charAt(0);
+	      if (curChar === '>' || curChar === ';') {
+	        var endTag = '';
+	        if (curChar === '>') {
+	          endTag = '<';
+	        } else {
+	          endTag = '&';
+	        }
+	        while (curString.substr(curStrPos - 1).charAt(0) !== endTag) {
+	          curStrPos--;
+	          if (curStrPos < 0) {
+	            break;
+	          }
+	        }
+	        curStrPos--;
+	      }
+	      return curStrPos;
+	    }
+	  }]);
+	
+	  return HTMLParser;
+	})();
+	
+	exports['default'] = HTMLParser;
+	var htmlParser = new HTMLParser();
+	exports.htmlParser = htmlParser;
 
-    defaultMaxListeners = arg;
-  }
+/***/ })
+/******/ ])
 });
-
-EventEmitter.init = function () {
-  if (this._events === undefined || this._events === Object.getPrototypeOf(this)._events) {
-    this._events = Object.create(null);
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
-}; // Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-
-
-EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
-    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
-  }
-
-  this._maxListeners = n;
-  return this;
-};
-
-function _getMaxListeners(that) {
-  if (that._maxListeners === undefined) return EventEmitter.defaultMaxListeners;
-  return that._maxListeners;
-}
-
-EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return _getMaxListeners(this);
-};
-
-EventEmitter.prototype.emit = function emit(type) {
-  var args = [];
-
-  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-
-  var doError = type === 'error';
-  var events = this._events;
-  if (events !== undefined) doError = doError && events.error === undefined;else if (!doError) return false; // If there is no 'error' event listener then throw.
-
-  if (doError) {
-    var er;
-    if (args.length > 0) er = args[0];
-
-    if (er instanceof Error) {
-      // Note: The comments on the `throw` lines are intentional, they show
-      // up in Node's output if this results in an unhandled exception.
-      throw er; // Unhandled 'error' event
-    } // At least give some kind of context to the user
-
-
-    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
-    err.context = er;
-    throw err; // Unhandled 'error' event
-  }
-
-  var handler = events[type];
-  if (handler === undefined) return false;
-
-  if (typeof handler === 'function') {
-    ReflectApply(handler, this, args);
-  } else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-
-    for (var i = 0; i < len; ++i) ReflectApply(listeners[i], this, args);
-  }
-
-  return true;
-};
-
-function _addListener(target, type, listener, prepend) {
-  var m;
-  var events;
-  var existing;
-  checkListener(listener);
-  events = target._events;
-
-  if (events === undefined) {
-    events = target._events = Object.create(null);
-    target._eventsCount = 0;
-  } else {
-    // To avoid recursion in the case that type === "newListener"! Before
-    // adding it to the listeners, first emit "newListener".
-    if (events.newListener !== undefined) {
-      target.emit('newListener', type, listener.listener ? listener.listener : listener); // Re-assign `events` because a newListener handler could have caused the
-      // this._events to be assigned to a new object
-
-      events = target._events;
-    }
-
-    existing = events[type];
-  }
-
-  if (existing === undefined) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    existing = events[type] = listener;
-    ++target._eventsCount;
-  } else {
-    if (typeof existing === 'function') {
-      // Adding the second element, need to change to array.
-      existing = events[type] = prepend ? [listener, existing] : [existing, listener]; // If we've already got an array, just append.
-    } else if (prepend) {
-      existing.unshift(listener);
-    } else {
-      existing.push(listener);
-    } // Check for listener leak
-
-
-    m = _getMaxListeners(target);
-
-    if (m > 0 && existing.length > m && !existing.warned) {
-      existing.warned = true; // No error code for this since it is a Warning
-      // eslint-disable-next-line no-restricted-syntax
-
-      var w = new Error('Possible EventEmitter memory leak detected. ' + existing.length + ' ' + String(type) + ' listeners ' + 'added. Use emitter.setMaxListeners() to ' + 'increase limit');
-      w.name = 'MaxListenersExceededWarning';
-      w.emitter = target;
-      w.type = type;
-      w.count = existing.length;
-      ProcessEmitWarning(w);
-    }
-  }
-
-  return target;
-}
-
-EventEmitter.prototype.addListener = function addListener(type, listener) {
-  return _addListener(this, type, listener, false);
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.prependListener = function prependListener(type, listener) {
-  return _addListener(this, type, listener, true);
-};
-
-function onceWrapper() {
-  if (!this.fired) {
-    this.target.removeListener(this.type, this.wrapFn);
-    this.fired = true;
-    if (arguments.length === 0) return this.listener.call(this.target);
-    return this.listener.apply(this.target, arguments);
-  }
-}
-
-function _onceWrap(target, type, listener) {
-  var state = {
-    fired: false,
-    wrapFn: undefined,
-    target: target,
-    type: type,
-    listener: listener
-  };
-  var wrapped = onceWrapper.bind(state);
-  wrapped.listener = listener;
-  state.wrapFn = wrapped;
-  return wrapped;
-}
-
-EventEmitter.prototype.once = function once(type, listener) {
-  checkListener(listener);
-  this.on(type, _onceWrap(this, type, listener));
-  return this;
-};
-
-EventEmitter.prototype.prependOnceListener = function prependOnceListener(type, listener) {
-  checkListener(listener);
-  this.prependListener(type, _onceWrap(this, type, listener));
-  return this;
-}; // Emits a 'removeListener' event if and only if the listener was removed.
-
-
-EventEmitter.prototype.removeListener = function removeListener(type, listener) {
-  var list, events, position, i, originalListener;
-  checkListener(listener);
-  events = this._events;
-  if (events === undefined) return this;
-  list = events[type];
-  if (list === undefined) return this;
-
-  if (list === listener || list.listener === listener) {
-    if (--this._eventsCount === 0) this._events = Object.create(null);else {
-      delete events[type];
-      if (events.removeListener) this.emit('removeListener', type, list.listener || listener);
-    }
-  } else if (typeof list !== 'function') {
-    position = -1;
-
-    for (i = list.length - 1; i >= 0; i--) {
-      if (list[i] === listener || list[i].listener === listener) {
-        originalListener = list[i].listener;
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0) return this;
-    if (position === 0) list.shift();else {
-      spliceOne(list, position);
-    }
-    if (list.length === 1) events[type] = list[0];
-    if (events.removeListener !== undefined) this.emit('removeListener', type, originalListener || listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-
-EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
-  var listeners, events, i;
-  events = this._events;
-  if (events === undefined) return this; // not listening for removeListener, no need to emit
-
-  if (events.removeListener === undefined) {
-    if (arguments.length === 0) {
-      this._events = Object.create(null);
-      this._eventsCount = 0;
-    } else if (events[type] !== undefined) {
-      if (--this._eventsCount === 0) this._events = Object.create(null);else delete events[type];
-    }
-
-    return this;
-  } // emit removeListener for all listeners on all events
-
-
-  if (arguments.length === 0) {
-    var keys = Object.keys(events);
-    var key;
-
-    for (i = 0; i < keys.length; ++i) {
-      key = keys[i];
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-
-    this.removeAllListeners('removeListener');
-    this._events = Object.create(null);
-    this._eventsCount = 0;
-    return this;
-  }
-
-  listeners = events[type];
-
-  if (typeof listeners === 'function') {
-    this.removeListener(type, listeners);
-  } else if (listeners !== undefined) {
-    // LIFO order
-    for (i = listeners.length - 1; i >= 0; i--) {
-      this.removeListener(type, listeners[i]);
-    }
-  }
-
-  return this;
-};
-
-function _listeners(target, type, unwrap) {
-  var events = target._events;
-  if (events === undefined) return [];
-  var evlistener = events[type];
-  if (evlistener === undefined) return [];
-  if (typeof evlistener === 'function') return unwrap ? [evlistener.listener || evlistener] : [evlistener];
-  return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
-}
-
-EventEmitter.prototype.listeners = function listeners(type) {
-  return _listeners(this, type, true);
-};
-
-EventEmitter.prototype.rawListeners = function rawListeners(type) {
-  return _listeners(this, type, false);
-};
-
-EventEmitter.listenerCount = function (emitter, type) {
-  if (typeof emitter.listenerCount === 'function') {
-    return emitter.listenerCount(type);
-  } else {
-    return listenerCount.call(emitter, type);
-  }
-};
-
-EventEmitter.prototype.listenerCount = listenerCount;
-
-function listenerCount(type) {
-  var events = this._events;
-
-  if (events !== undefined) {
-    var evlistener = events[type];
-
-    if (typeof evlistener === 'function') {
-      return 1;
-    } else if (evlistener !== undefined) {
-      return evlistener.length;
-    }
-  }
-
-  return 0;
-}
-
-EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
-};
-
-function arrayClone(arr, n) {
-  var copy = new Array(n);
-
-  for (var i = 0; i < n; ++i) copy[i] = arr[i];
-
-  return copy;
-}
-
-function spliceOne(list, index) {
-  for (; index + 1 < list.length; index++) list[index] = list[index + 1];
-
-  list.pop();
-}
-
-function unwrapListeners(arr) {
-  var ret = new Array(arr.length);
-
-  for (var i = 0; i < ret.length; ++i) {
-    ret[i] = arr[i].listener || arr[i];
-  }
-
-  return ret;
-}
-},{}],"node_modules/gestures/index.js":[function(require,module,exports) {
-var interact = require('interact-js'),
-    EventEmitter = require('events').EventEmitter;
-
-function GestureDetector(target){
-    this.target = target || document;
-
-    interact.on('start', this.target, this.__boundStart = this._start.bind(this));
-
-    interact.on('drag', this.target, this.__boundStart = this._drag.bind(this));
-
-    interact.on('end', this.target, this.__boundEnd = this._end.bind(this));
-
-    this.gestures = [];
-}
-GestureDetector.prototype = Object.create(EventEmitter.prototype);
-GestureDetector.prototype.constructor = GestureDetector;
-GestureDetector.prototype._start = function(interaction) {
-    interaction.points = [];
-};
-GestureDetector.prototype._drag = function(interaction) {
-    interaction.points.push({
-        x: interaction.pageX,
-        y: interaction.pageY
-    });
-};
-GestureDetector.prototype._end = function(interaction) {
-    var detector = this;
-    this.gestures.forEach(function(gesture){
-        var gestureName = gesture.call(this, interaction.points);
-        if(gestureName){
-            detector.emit('gesture', {
-                name: gestureName,
-                points: interaction.points
-            });
-        }
-    });
-};
-GestureDetector.destroy = function(){
-    interact.off('start', this.target, this.__boundStart);
-
-    interact.on('end', this.target, this.__boundEnd);
-};
-
-module.exports = GestureDetector;
-},{"interact-js":"node_modules/interact-js/interact.js","events":"node_modules/events/events.js"}],"node_modules/math-js/constants.js":[function(require,module,exports) {
-var pi = Math.PI;
-
-module.exports = {
-    pi: pi,
-    degreesInACircle: 360,
-    radiansInACircle: 2 * pi
-};
-},{}],"node_modules/math-js/angles/radiansToDegrees.js":[function(require,module,exports) {
-var constants = require('../constants');
-
-module.exports = function(radians) {
-    return (radians / constants.radiansInACircle) * constants.degreesInACircle;
-};
-},{"../constants":"node_modules/math-js/constants.js"}],"node_modules/konami-touch/linearRegresion.js":[function(require,module,exports) {
-module.exports = function linearRegresion(points) {
-    var sumX = 0,
-        sumY = 0,
-        sumXbyY = 0,
-        sumXbyX = 0,
-        x = 0,
-        y = 0,
-        numberOfPoints = points.length,
-        results = [],
-        m,
-        b;
-
-    if (numberOfPoints === 0) {
-        return [];
-    }
-
-    for (var i = 0; i < numberOfPoints; i++) {
-        x = points[i].x;
-        y = points[i].y;
-        sumX += x;
-        sumY += y;
-        sumXbyX += x*x;
-        sumXbyY += x*y;
-    }
-
-    m = (numberOfPoints * sumXbyY - sumX * sumY) / (numberOfPoints * sumXbyX - sumX * sumX);
-    b = (sumY / numberOfPoints) - (m * sumX) / numberOfPoints;
-
-
-    for (var i = 0; i < numberOfPoints; i++) {
-        results.push({
-            x: points[i].x,
-            y: points[i].x * m + b
-        });
-    }
-
-    return results;
-}
-},{}],"node_modules/konami-touch/index.js":[function(require,module,exports) {
-var konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'tap', 'tap', 'tap'],
-    GestureDetector = require('gestures'),
-    radiansToDegrees = require('math-js/angles/radiansToDegrees'),
-    linearRegresion = require('./linearRegresion');
-
-function getGestureVector(moves){
-    var line = linearRegresion(moves),
-        direction = 0,
-        magitude = 0;
-
-    if(line.length>2){
-        var startPoint = line[0],
-            endPoint = line[line.length - 1];
-
-        direction = radiansToDegrees(Math.atan2(-(startPoint.x - endPoint.x), startPoint.y - endPoint.y));
-        magitude = Math.sqrt(Math.pow(Math.abs(startPoint.x - endPoint.x), 2) + Math.pow(Math.abs(startPoint.y - endPoint.y), 2));
-    }
-
-    return {
-        direction: direction,
-        magitude: magitude
-    };
-}
-
-function KonamiTouch(success){
-
-    this.code = konamiCode;
-    this.success = success || function(){};
-    this.codeIndex = 0;
-
-    var detector = new GestureDetector();
-
-    detector.gestures.push(function(moves){
-        var vector = getGestureVector(moves);
-
-        if(vector.magitude < 5){
-            return 'tap';
-        }
-        if(vector.magitude > 5 && vector.magitude < 20){
-            return;
-        }
-
-        if(vector.direction > -45 && vector.direction < 45){
-            return 'up';
-        }
-        if(vector.direction < -135 || vector.direction > 135){
-            return 'down';
-        }
-        if(vector.direction < -45 && vector.direction > -135){
-            return 'left';
-        }
-        if(vector.direction > 45 && vector.direction < 135){
-            return 'right';
-        }
-    });
-
-    detector.on('gesture', this.checkCode.bind(this));
-}
-
-KonamiTouch.prototype.checkCode = function checkCode(event){
-    if(event.name === this.code[this.codeIndex++]){
-        if(this.codeIndex === this.code.length){
-            this.success();
-            this.codeIndex = 0;
-        }
-    }else{
-        this.codeIndex = 0;
-    }
-};
-
-module.exports = KonamiTouch;
-
-},{"gestures":"node_modules/gestures/index.js","math-js/angles/radiansToDegrees":"node_modules/math-js/angles/radiansToDegrees.js","./linearRegresion":"node_modules/konami-touch/linearRegresion.js"}],"node_modules/konami-js/index.js":[function(require,module,exports) {
-var KonamiKeyboard = require('konami-keyboard'),
-    KonamiTouch = require('konami-touch');
-
-function Konami(success){
-    new KonamiKeyboard(success || function(){});
-    new KonamiTouch(success || function(){});
-}
-
-Konami.prototype.constructor = Konami;
-
-module.exports = Konami;
-},{"konami-keyboard":"node_modules/konami-keyboard/index.js","konami-touch":"node_modules/konami-touch/index.js"}],"app.js":[function(require,module,exports) {
+;
+},{}],"app.js":[function(require,module,exports) {
 setTimeout(function () {
   document.querySelector("h1").className = "";
 }, 1000);
 
-var konami = require("konami-js");
+var konami = require("konami");
 
-new konami(function () {
-  window.location.assign("https://www.snapchat.com/add/eamon.ma");
+new konami("https://www.snapchat.com/add/eamon.ma");
+
+var typed = require("typed.js");
+
+new typed(".type", {
+  strings: [" is a human", " subscribes to <em>The Economist</em>."],
+  typeSpeed: 30
 });
-},{"konami-js":"node_modules/konami-js/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"konami":"node_modules/konami/konami.js","typed.js":"node_modules/typed.js/lib/typed.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1175,7 +1367,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52912" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54242" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
