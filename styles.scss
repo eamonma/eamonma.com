@@ -92,30 +92,6 @@ h1 {
     opacity: 1;
 }
 
-.hidden {
-    display: none;
-}
-
-.github a {
-    background-image: url("assets/github.png");
-}
-
-.email a {
-    background-image: url("assets/email.png");
-}
-
-.instagram a {
-    background-image: url("assets/instagram.png");
-}
-
-.linkedin a {
-    background-image: url("assets/linkedin.png");
-}
-
-.social {
-    margin-top: 1em;
-}
-
 .social ul {
     position: absolute;
     top: 0;
@@ -127,50 +103,126 @@ h1 {
     padding: 0;
     margin: 0;
 
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
 
     li {
-        display: block;
         margin: 0;
         padding: 0;
         width: 50vw;
         height: 50vh;
         display: flex;
+
         a {
             margin: auto;
             width: 100%;
             height: 100%;
             background-position: center center;
             background-size: 60px;
+            display: flex;
+            text-decoration: none;
 
             &::after {
                 content: "";
                 position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
+                // top: 0;
+                // left: 0;
                 width: 100px;
                 height: 100px;
-                margin: auto;
                 background-color: white;
                 border-radius: 50%;
                 opacity: 1;
                 transition: opacity 0.2s ease-in-out;
+                z-index: 1;
             }
 
             &:hover::after {
                 opacity: 0;
             }
+
+            .hidden {
+                position: absolute;
+                width: 70px;
+                height: 70px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            }
         }
 
         &:hover {
-            background: rgba($color: #E0E7F5, $alpha: 0.7);
+            background: rgba($color: #E0E7F5, $alpha: 0.8);
             backdrop-filter: blur(5px);
         }
     }
 }
+
+.hidden {
+    color: rgba(0, 0, 0, 0);
+}
+
+.github a {
+    &::after {
+        right: 20px;
+        bottom: 20px;
+    }
+
+    .hidden {
+        // content: "";
+
+        bottom: 35px;
+        right: 35px;
+        background-image: url("assets/github.png");
+        // background: none;}
+    }
+}
+
+.email a {
+    &::after {
+        left: 20px;
+        bottom: 20px;
+    }
+
+    .hidden {
+        bottom: 30px;
+        left: 30px;
+        transform: scale(0.85);
+        background-image: url("assets/email.png");
+    }
+}
+
+.instagram a {
+    &::after {
+        right: 20px;
+        top: 20px;
+    }
+
+    .hidden {
+        top: 35px;
+        right: 35px;
+        transform: scale(0.9);
+        background-image: url("assets/instagram.png");
+    }
+}
+
+.linkedin a {
+    &::after {
+        left: 20px;
+        top: 20px;
+    }
+
+    .hidden {
+        top: 35px;
+        left: 35px;
+        transform: scale(0.8);
+        background-image: url("assets/linkedin.png");
+    }
+}
+
+// .social {
+//     margin-top: 1em;
+// }
 
 @media (hover: none) {
     .social ul {
