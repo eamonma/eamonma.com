@@ -1,0 +1,29 @@
+{
+  "name": "eamonma.com",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel start index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eamonma/eamonma.com.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eamonma/eamonma.com/issues"
+  },
+  "homepage": "https://github.com/eamonma/eamonma.com#readme",
+  "dependencies": {
+    "gsap": "^3.5.1",
+    "parcel-bundler": "^1.12.4",
+    "three": "^0.122.0"
+  },
+  "devDependencies": {
+    "sass": "^1.29.0"
+  }
+}
