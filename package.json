@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel start index.html",
+    "dist": "parcel build index.html dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
