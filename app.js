@@ -90,6 +90,7 @@ gsap.to(cube.rotation, {
         scrub: true,
         // markers: true
     }, duration: 2,
+    rotation: 0.01,
     y: `+=${Math.PI * 3}`,
     x: `+=${Math.PI * 2}`,
     z: `+=${Math.PI * 1.5}`, opacity: "-=0.1"

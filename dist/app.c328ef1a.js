@@ -50687,6 +50687,7 @@ _all.gsap.to(cube.rotation, {
 
   },
   duration: 2,
+  rotation: 0.01,
   y: "+=".concat(Math.PI * 3),
   x: "+=".concat(Math.PI * 2),
   z: "+=".concat(Math.PI * 1.5),
