@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/eamonma/eamonma.com#readme",
   "dependencies": {
-    "gsap": "^3.5.1",
+    "gsap": "^3.6.0",
     "parcel-bundler": "^1.12.4",
     "three": "^0.122.0"
   },
