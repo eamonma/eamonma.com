@@ -19,7 +19,7 @@ h1 {
   color: white;
   position: absolute;
   z-index: 100;
-  transform: translateY(-50%);
+  opacity: 0;
 }
 
 .box {
