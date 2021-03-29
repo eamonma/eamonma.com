@@ -1,1 +1,0 @@
-{"version":3,"sources":["styles.css"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA;AACA;AACA","file":"styles.8986bff4.css","sourceRoot":"..","sourcesContent":[".spacer {\n    height: 75vh;\n}\n\nh1 {\n    transform-origin: 50%, 50%;\n}"]}
