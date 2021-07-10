@@ -13,7 +13,9 @@ const AppComponent = styled.div`
 `
 
 const Name = styled.h1`
-    font-family: "Agenda", sans-serif;
+    font-family: agenda, sans-serif;
+    font-weight: 300;
+    font-style: normal;
     margin: 0 auto;
     /* margin-bottom: 1.4rem; */
     text-transform: uppercase;
@@ -23,7 +25,7 @@ const Name = styled.h1`
 `
 
 const SectionHeading = styled.h2`
-    font-family: "Agenda", sans-serif;
+    font-family: agenda, sans-serif;
     font-variant: small-caps;
     letter-spacing: 0.08rem;
     font-size: 1.2rem;
