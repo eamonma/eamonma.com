@@ -89,3 +89,16 @@ export const JuiceDescription = styled(motion.div)`
         font-size: 1.3rem;
     }
 `
+
+export const External = styled(motion.a)`
+    display: block;
+    color: ${({ theme }) => theme.blue};
+    transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+    text-decoration: none;
+
+    @media (hover: hover) {
+        &:hover {
+            color: #314772;
+        }
+    }
+`

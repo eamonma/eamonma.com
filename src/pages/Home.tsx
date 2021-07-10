@@ -3,11 +3,12 @@ import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import {
+    External,
     Juice,
+    JuiceDescription,
+    JuiceHeading,
     Section,
     SectionHeading,
-    JuiceHeading,
-    JuiceDescription,
 } from "../components/section"
 
 const AppComponent = styled(motion.div)`
@@ -43,20 +44,10 @@ const ContactJuice = styled(motion.div)`
     width: 100%;
 `
 
-const ContactLink = styled(motion.a)`
-    font-size: 1.4rem;
-    color: ${({ theme }) => theme.blue};
-    transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
-    text-decoration: none;
-
+const ContactLink = styled(External)`
     padding-left: 0.35rem;
     padding-right: 0.35rem;
-
-    @media (hover: hover) {
-        &:hover {
-            color: #314772;
-        }
-    }
+    font-size: 1.4rem;
 `
 
 const Home = () => {

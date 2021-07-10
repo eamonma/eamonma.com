@@ -11,6 +11,11 @@ import {
 
 const Main = styled(motion.div)`
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 100vh;
+    justify-content: center;
 `
 
 const JuiceProject = styled(Juice)`
@@ -43,7 +48,9 @@ const SectionProject = styled(Section)`
 
 const Info = styled(motion.main)`
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     font-size: 1.2rem;
     line-height: 1.8rem;
     color: #333;
@@ -54,8 +61,8 @@ const CloseLink = motion<LinkProps>(Link)
 const Close = styled(CloseLink)`
     position: fixed;
     display: block;
-    height: 2rem;
-    width: 2rem;
+    height: 3rem;
+    width: 3rem;
     font-size: 0;
     top: 2.5rem;
     right: 1.5rem;
@@ -81,7 +88,6 @@ const Close = styled(CloseLink)`
         width: 70%;
         height: 0.15rem; /* cross thickness */
         background-color: #888;
-        /* transform-origin: top; */
         transition: transform 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
@@ -105,7 +111,7 @@ const JuiceHeadingProject = styled(JuiceHeading)`
     &,
     & a,
     & a:visited {
-        color: #000;
+        color: #333;
         text-decoration: none;
         font-size: 2.8rem;
         margin: 0;
@@ -121,8 +127,9 @@ const JuiceDescriptionProject = styled(JuiceDescription)`
     & a:visited,
     & a:hover {
         text-decoration: none;
-        color: #444;
+        color: #666;
         font-size: 1.5rem;
+        font-weight: 500;
     }
 `
 
