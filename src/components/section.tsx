@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 import styled from "styled-components"
 
 export const SectionHeading = styled(motion.h2)`
@@ -108,4 +109,23 @@ export const AnchorLink = styled(motion.a)`
 
 export const External = styled(AnchorLink)`
     display: block;
+`
+
+export const MoreLink = styled(Link)`
+    &,
+    & a,
+    & a:visited {
+        text-decoration: none;
+        color: ${({ theme }) => theme.blue};
+        transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+        text-decoration: none;
+        padding-left: 0.6rem;
+
+        @media (hover: hover) {
+            &:hover {
+                color: #314772;
+            }
+        }
+        font-size: 1.3rem;
+    }
 `

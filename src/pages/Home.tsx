@@ -3,10 +3,12 @@ import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import {
+    AnchorLink,
     External,
     Juice,
     JuiceDescription,
     JuiceHeading,
+    MoreLink,
     Section,
     SectionHeading,
 } from "../components/section"
@@ -72,9 +74,25 @@ const Home = () => {
                             </JuiceHeading>
                             <JuiceDescription layoutId={project.desc}>
                                 <Link to={`/${project.title.toLowerCase()}`}>
-                                    {project.desc}
+                                    {project.desc}.{" "}
                                 </Link>
                             </JuiceDescription>
+                            <MoreLink to={`/${project.title.toLowerCase()}`}>
+                                {" "}
+                                More
+                                <span
+                                    style={{
+                                        fontSize: "1rem",
+                                        position: "relative",
+                                        display: "inline-block",
+                                        bottom: "0.12rem",
+                                        left: "0.2rem",
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    &#9002;
+                                </span>
+                            </MoreLink>
                         </Juice>
                     ))}
                 </Section>
