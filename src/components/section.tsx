@@ -49,10 +49,6 @@ export const Juice = styled(motion.div)`
                 color: hsl(0, 60%, 49.21568627450981%);
             }
 
-            /* & {
-            transform: translateX(1%);
-            } */
-
             div,
             div a {
                 color: #222;

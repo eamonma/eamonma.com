@@ -26,7 +26,12 @@ const JuiceProject = styled(Juice)`
         &:hover {
             h3,
             h3 a {
-                color: #000;
+                color: #333;
+            }
+
+            div,
+            div a {
+                color: #666;
             }
         }
     }
