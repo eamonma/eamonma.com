@@ -13,7 +13,7 @@ const Hermes = (props: any) => {
                 media production companies. Google Drive, Mega, Dropbox, and
                 other cloud storage providers feel impersonal and amateur. Other
                 video-centric platforms lack the simple ability to deliver image
-                files and auxilary files. <i>Hermes</i> seeks to rectify this
+                files and auxiliary files. <i>Hermes</i> seeks to rectify this
                 with a focus on client experience. Built with TypeScript,
                 GraphQL, Node.js, and React.
             </Elaboration>
