@@ -53,21 +53,6 @@ const ContactLink = styled(External)`
     font-size: 1.4rem;
 `
 
-const JuiceHeadingHome = styled(JuiceHeading)`
-    &::before {
-        content: "";
-        position: absolute;
-        left: -60px;
-        top: -20px;
-        display: block;
-        background-image: url(${moreImage});
-        background-size: contain;
-        background-repeat: no-repeat;
-        width: 100px;
-        height: 50px;
-    }
-`
-
 const Home = () => {
     const projects = [
         { title: "Hermes", desc: "Delivering projects to clients" },
@@ -83,11 +68,11 @@ const Home = () => {
                     <SectionHeading>projects</SectionHeading>
                     {projects.map((project) => (
                         <Juice>
-                            <JuiceHeadingHome layoutId={project.title}>
+                            <JuiceHeading layoutId={project.title}>
                                 <Link to={`/${project.title.toLowerCase()}`}>
                                     {project.title}
                                 </Link>
-                            </JuiceHeadingHome>
+                            </JuiceHeading>
                             <JuiceDescription layoutId={project.desc}>
                                 <Link to={`/${project.title.toLowerCase()}`}>
                                     {project.desc}.{" "}
