@@ -114,10 +114,9 @@ const JuiceHeadingProject = styled(JuiceHeading)`
         color: #333;
         text-decoration: none;
         font-size: 2.8rem;
+        line-height: 2.8rem;
         margin: 0;
-        @media (min-width: 550px) {
-            margin-right: 0.5rem;
-        }
+        margin-top: 1rem;
     }
 `
 
@@ -130,6 +129,7 @@ const JuiceDescriptionProject = styled(JuiceDescription)`
         color: #666;
         font-size: 1.5rem;
         font-weight: 500;
+        margin: 0;
     }
 `
 

@@ -16,11 +16,17 @@ const Hermes = (props: any) => {
                 files and auxilary files. <i>Hermes</i> seeks to rectify this
                 with a focus on client experience. Built with TypeScript,
                 GraphQL, Node.js, and React.
-                <External href="https://github.com/eamonma/hermes-server">
-                    See on GitHub.
-                </External>
             </Elaboration>
-            <Image src={hermesImage} alt="Depicts the Hermes application" />
+            <External href="https://github.com/eamonma/hermes-server">
+                See on GitHub.
+            </External>
+            {/* Set width and height to prevent reflow */}
+            <Image
+                width="1920"
+                height="1075"
+                src={hermesImage}
+                alt="Depicts the Hermes application"
+            />
         </Project>
     )
 }

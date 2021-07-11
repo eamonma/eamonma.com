@@ -81,14 +81,14 @@ const Home = () => {
                 <Section>
                     <SectionHeading>contact</SectionHeading>
                     <ContactJuice>
+                        <ContactLink href="mailto:m@eamonma.com">
+                            Email
+                        </ContactLink>
                         <ContactLink href="https://instagram.com/eam.on">
                             Instagram
                         </ContactLink>
                         <ContactLink href="https://github.com/eamonma">
                             GitHub
-                        </ContactLink>
-                        <ContactLink href="mailto:m@eamonma.com">
-                            Email
                         </ContactLink>
                         <ContactLink href="https://linkedin.com/in/eamonma">
                             LinkedIn

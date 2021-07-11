@@ -49,13 +49,14 @@ export const Juice = styled(motion.div)`
                 color: hsl(0, 60%, 49.21568627450981%);
             }
 
-            /* & { */
-            /* transform: translateX(1%); */
-            /* } */
+            /* & {
+            transform: translateX(1%);
+            } */
 
-            /* div, div a {
-            color: #333;
-        } */
+            div,
+            div a {
+                color: #222;
+            }
         }
     }
 `
@@ -65,6 +66,7 @@ export const JuiceHeading = styled(motion.h3)`
     & a,
     /* & a:hover, */
     & a:visited {
+        position: relative;
         transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
         color: ${({ theme }) => theme.red};
         text-decoration: none;
@@ -73,6 +75,12 @@ export const JuiceHeading = styled(motion.h3)`
     }
 
     & a {
+        &::after {
+            position: relative;
+            content: "°";
+            font-size: 70%;
+            top: -0.5em;
+        }
         @media (min-width: 550px) {
             padding-right: 0.3rem;
         }
@@ -90,8 +98,7 @@ export const JuiceDescription = styled(motion.div)`
     }
 `
 
-export const External = styled(motion.a)`
-    display: block;
+export const AnchorLink = styled(motion.a)`
     color: ${({ theme }) => theme.blue};
     transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
     text-decoration: none;
@@ -101,4 +108,8 @@ export const External = styled(motion.a)`
             color: #314772;
         }
     }
+`
+
+export const External = styled(AnchorLink)`
+    display: block;
 `

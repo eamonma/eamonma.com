@@ -1,44 +1,48 @@
 import React from "react"
+import { Elaboration } from "../components/project"
+import { AnchorLink, External } from "../components/section"
 import Project from "../Project"
 
 const Wikigraph = (props: any) => {
     return (
         <Project heading="Wikigraph" desc="Representing Wikipedia with a graph">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque
-            facilis repudiandae cumque reiciendis quidem. Hic aspernatur dicta
-            aliquam consequatur nostrum doloribus assumenda impedit dolores,
-            itaque ea inventore ullam sunt obcaecati velit fugit, ipsum
-            repellendus iste, culpa maiores natus non vero. Minus incidunt quos
-            consequatur cumque repellendus eum quaerat similique maiores porro
-            quam! Sed modi cupiditate, explicabo beatae maiores dolor saepe
-            nisi. Repellendus, distinctio! Neque adipisci at iste magni alias
-            nam veritatis necessitatibus earum ut nulla vel iure repellendus
-            rerum harum tempora pariatur placeat, nobis iusto ea hic libero vero
-            quos. At numquam sit, deleniti ad sequi rem velit est dolor quam
-            amet quae sapiente molestiae culpa quo laudantium mollitia
-            molestias, id asperiores architecto eius, facere eligendi tempore
-            commodi placeat! Eveniet esse optio rerum? Ratione cum, animi
-            adipisci facere atque aut quam similique saepe veritatis neque,
-            totam non, accusantium rem in. Fuga inventore commodi esse tenetur
-            quia. Incidunt harum, sunt odit corrupti aliquid perspiciatis
-            consequatur debitis dolorem ipsam suscipit! Omnis accusantium
-            ducimus sit, aliquid consequuntur doloremque architecto culpa
-            delectus, illo, unde quis totam. Animi, maiores consectetur? Facere
-            sint dignissimos nostrum, magni, sapiente pariatur aspernatur sequi
-            harum expedita perferendis earum. In possimus ex quis, minima aut
-            debitis necessitatibus. Deleniti est tempora tempore libero soluta
-            autem ut repudiandae enim quibusdam accusantium nihil quod, ab
-            facere delectus exercitationem, eos aspernatur magni non. Tenetur
-            corporis, explicabo consequatur delectus nam quos sapiente
-            cupiditate ipsa nisi atque ad accusamus unde odit aliquid pariatur,
-            soluta modi id recusandae accusantium? Enim facilis temporibus
-            officiis esse debitis est excepturi velit cum. Reiciendis laboriosam
-            architecto, illo vel officia unde repellat! Aspernatur delectus
-            laudantium, fugit ullam suscipit accusantium voluptates iste,
-            tenetur obcaecati, debitis eveniet sit voluptatum! Impedit ratione
-            ab, sequi, autem unde soluta perspiciatis itaque nostrum incidunt ea
-            veniam illo mollitia earum beatae perferendis iure atque, quaerat
-            vero magnam consequuntur modi sed?
+            <Elaboration>
+                With{" "}
+                <AnchorLink href="https://github.com/hisbaan">
+                    Hisbaan Noorani
+                </AnchorLink>
+                ,{" "}
+                <AnchorLink href="https://github.com/Rachel-X">
+                    Rachel Xie
+                </AnchorLink>
+                , and{" "}
+                <AnchorLink href="https://github.com/PhiliDips">
+                    Philip Harker
+                </AnchorLink>
+                .
+            </Elaboration>
+            <Elaboration>
+                This project, initially started as an end-of-year project for{" "}
+                <span
+                    style={{
+                        fontVariant: "small-caps",
+                    }}
+                >
+                    csc
+                </span>
+                111 at UofT, is focused on finding gaps in the knowledge of
+                Wikipedia. The information found on Wikipedia can be used as a
+                microcosm for the greater collective human knowledge. Finding
+                gaps or underdeveloped areas in this will give us directions
+                that we should explore as a society. See the{" "}
+                <AnchorLink href="https://github.com/eamonma/wikigraph/blob/master/report/report.pdf">
+                    project report
+                </AnchorLink>{" "}
+                for more information.
+            </Elaboration>
+            <External href="https://github.com/eamonma/wikigraph">
+                See on GitHub.
+            </External>
         </Project>
     )
 }

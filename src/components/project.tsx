@@ -5,16 +5,17 @@ export const Elaboration = styled(motion.div)`
     width: 40rem;
     max-width: 100vw;
     padding: 1rem;
-
+    /* 
     @media (max-width: 550px) {
         padding: 0 1rem;
-    }
+    } */
 `
 
 export const Image = styled.img`
     margin: 2rem 0;
     width: 1200px;
     max-width: 100%;
+    height: auto;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
