@@ -121,6 +121,10 @@ export const MoreLink = styled(Link)`
         text-decoration: none;
         padding-left: 0.6rem;
 
+        @media (max-width: 550px) {
+            padding-left: 0;
+        }
+
         @media (hover: hover) {
             &:hover {
                 color: #314772;
