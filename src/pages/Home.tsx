@@ -2,8 +2,8 @@ import { motion } from "framer-motion"
 import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import moreImage from "../assets/more.png"
 import {
-    AnchorLink,
     External,
     Juice,
     JuiceDescription,
@@ -12,7 +12,6 @@ import {
     Section,
     SectionHeading,
 } from "../components/section"
-import moreImage from "../assets/more.png"
 
 const AppComponent = styled(motion.div)`
     display: flex;
