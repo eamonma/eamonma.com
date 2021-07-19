@@ -110,6 +110,12 @@ const Close = styled(CloseLink)`
             transform: rotate(0deg);
         }
     }
+
+    @media (prefers-color-scheme: dark) {
+        & {
+            background-color: #222;
+        }
+    }
 `
 
 const JuiceHeadingProject = styled(JuiceHeading)`
@@ -122,6 +128,10 @@ const JuiceHeadingProject = styled(JuiceHeading)`
         line-height: 2.8rem;
         margin: 0;
         margin-top: 1rem;
+
+        @media (prefers-color-scheme: dark) {
+            color: #fafafa;
+        }
     }
 `
 

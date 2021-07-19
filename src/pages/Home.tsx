@@ -27,6 +27,7 @@ const Name = styled(motion.h1)`
     font-style: normal;
     margin: 0 auto;
     /* margin-bottom: 1.4rem; */
+    color: #000;
     text-transform: uppercase;
     font-size: 2.4rem;
     font-weight: 300;
@@ -36,6 +37,9 @@ const Name = styled(motion.h1)`
 const Title = styled(motion.div)`
     margin: 0 auto;
     color: #444;
+    /* @media (prefers-color-scheme: dark) {
+        color: #aaa;
+    } */
     font-size: 1.2rem;
     margin-bottom: 1rem;
 `
