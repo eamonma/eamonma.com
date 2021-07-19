@@ -111,11 +111,11 @@ const Close = styled(CloseLink)`
         }
     }
 
-    @media (prefers-color-scheme: dark) {
+    /* @media (prefers-color-scheme: dark) {
         & {
             background-color: #222;
         }
-    }
+    } */
 `
 
 const JuiceHeadingProject = styled(JuiceHeading)`
@@ -129,9 +129,9 @@ const JuiceHeadingProject = styled(JuiceHeading)`
         margin: 0;
         margin-top: 1rem;
 
-        @media (prefers-color-scheme: dark) {
+        /* @media (prefers-color-scheme: dark) {
             color: #fafafa;
-        }
+        } */
     }
 `
 
