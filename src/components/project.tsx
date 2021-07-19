@@ -19,5 +19,5 @@ export const Image = styled.img`
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    box-shadow: 3px 3px 12px -6px rgba(0, 0, 0, 0.4);
+    box-shadow: 3px 3px 16px -6px rgba(0, 0, 0, 0.4);
 ` as any

@@ -3,7 +3,8 @@ import Project from "../Project"
 import { Elaboration, Image } from "../components/project"
 import { External } from "../components/section"
 
-import hermesImage from "../assets/hermes.png"
+import hermesImage from "../assets/hermes-1.jpg"
+import hermesImage2 from "../assets/hermes-2.jpg"
 
 const Hermes = (props: any) => {
     return (
@@ -17,7 +18,7 @@ const Hermes = (props: any) => {
                 with a focus on client experience. Built with TypeScript,
                 GraphQL, Node.js, and React.
             </Elaboration>
-            <External href="https://github.com/eamonma/hermes-server">
+            <External href="https://github.com/eamonma/hermes">
                 See on GitHub.
             </External>
             {/* Set width and height to prevent reflow */}
@@ -25,6 +26,12 @@ const Hermes = (props: any) => {
                 width="1920"
                 height="1075"
                 src={hermesImage}
+                alt="Depicts the Hermes application"
+            />
+            <Image
+                width="1920"
+                height="1075"
+                src={hermesImage2}
                 alt="Depicts the Hermes application"
             />
         </Project>
