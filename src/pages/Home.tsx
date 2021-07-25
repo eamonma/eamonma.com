@@ -57,6 +57,7 @@ const ContactLink = styled(External)`
 
 const Home = () => {
     const projects = [
+        { title: "Sqrl", desc: "Coming soon", noMore: true },
         { title: "Hermes", desc: "Delivering projects to clients" },
         { title: "Wikigraph", desc: "Representing Wikipedia with a graph" },
         { title: "Notepool", desc: "Sharing notes with your class" },
@@ -80,8 +81,8 @@ const Home = () => {
                                     {project.desc}.{" "}
                                 </Link>
                             </JuiceDescription>
+                            {/* {!project.noMore && ( */}
                             <MoreLink to={`/${project.title.toLowerCase()}`}>
-                                {" "}
                                 More
                                 <span
                                     style={{
@@ -96,6 +97,7 @@ const Home = () => {
                                     &#9002;
                                 </span>
                             </MoreLink>
+                            {/* )} */}
                         </Juice>
                     ))}
                 </Section>

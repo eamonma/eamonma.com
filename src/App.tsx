@@ -7,6 +7,7 @@ import Hermes from "./pages/Hermes"
 import Home from "./pages/Home"
 import Notepool from "./pages/Notepool"
 import Wikigraph from "./pages/Wikigraph"
+import Sqrl from "./pages/Sqrl"
 import theme from "./theme"
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                 <Switch>
                     <ThemeProvider theme={theme}>
                         <Route path="/" exact component={Home} />
+                        <Route path="/sqrl" exact component={Sqrl} />
                         <Route path="/hermes" exact component={Hermes} />
                         <Route path="/notepool" exact component={Notepool} />
                         <Route path="/wikigraph" exact component={Wikigraph} />
