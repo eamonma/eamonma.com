@@ -6,7 +6,7 @@ export const SectionHeading = styled(motion.h2)`
     font-family: agenda, sans-serif;
     font-variant: small-caps;
     letter-spacing: 0.08rem;
-    font-size: 1.1rem;
+    font-size: 1.8em;
     font-weight: 500;
     margin: 0 auto;
     margin-bottom: 0.4rem;

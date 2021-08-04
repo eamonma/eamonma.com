@@ -54,6 +54,9 @@ const ContactLink = styled(External)`
     padding-right: 0.35rem;
     font-size: 1.4rem;
 `
+// const Component = React.forwardRef((props: any, ref: any) => <Link ref={ref} />)
+
+// const Link = motion(Component)
 
 const Home = () => {
     const projects = [
@@ -70,13 +73,13 @@ const Home = () => {
                 <Section>
                     <SectionHeading>projects</SectionHeading>
                     {projects.map((project) => (
-                        <Juice>
-                            <JuiceHeading layoutId={project.title}>
+                        <Juice layout>
+                            <JuiceHeading layout layoutId={project.title}>
                                 <Link to={`/${project.title.toLowerCase()}`}>
                                     {project.title}
                                 </Link>
                             </JuiceHeading>
-                            <JuiceDescription layoutId={project.desc}>
+                            <JuiceDescription layout layoutId={project.desc}>
                                 <Link to={`/${project.title.toLowerCase()}`}>
                                     {project.desc}.{" "}
                                 </Link>
@@ -97,7 +100,6 @@ const Home = () => {
                                     &#9002;
                                 </span>
                             </MoreLink>
-                            {/* )} */}
                         </Juice>
                     ))}
                 </Section>
