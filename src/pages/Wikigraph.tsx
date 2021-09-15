@@ -8,7 +8,7 @@ const Wikigraph = (props: any) => {
         <Project heading="Wikigraph" desc="Representing Wikipedia with a graph">
             <Elaboration>
                 With{" "}
-                <AnchorLink href="https://github.com/hisbaan">
+                <AnchorLink href="https://hisbaan.com">
                     Hisbaan Noorani
                 </AnchorLink>
                 ,{" "}
