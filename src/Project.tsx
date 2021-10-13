@@ -76,7 +76,8 @@ const Close = styled(CloseLink)`
     }
     color: transparent;
     transform: translateY(-1rem);
-    background: #fafafa;
+    background: hsla(0, 0%, 98.0392156862745%, 0.95);
+    backdrop-filter: blur(2px);
     padding: 0.6rem;
     border-radius: 100%;
 
@@ -90,7 +91,7 @@ const Close = styled(CloseLink)`
         bottom: 0;
         left: 0;
         content: "";
-        width: 70%;
+        width: 50%;
         height: 0.15rem; /* cross thickness */
         background-color: #888;
         transition: transform 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
