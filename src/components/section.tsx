@@ -4,9 +4,9 @@ import styled from "styled-components"
 
 export const SectionHeading = styled(motion.h2)`
     font-family: agenda, sans-serif;
-    font-variant: small-caps;
     letter-spacing: 0.08rem;
-    font-size: 1.8em;
+    font-size: 1.2em;
+    text-transform: uppercase;
     font-weight: 500;
     margin: 0 auto;
     margin-bottom: 0.4rem;
@@ -17,10 +17,11 @@ export const Section = styled(motion.section)`
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    width: 100%;
     max-width: 100vw;
-    padding: 1rem;
+    padding: 0.4rem;
     margin: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     position: relative;
 `
 
@@ -67,7 +68,7 @@ export const JuiceHeading = styled(motion.h3)`
         transition: color 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
         color: ${({ theme }) => theme.red};
         text-decoration: none;
-        font-size: 1.6rem;
+        font-size: 1.2rem;
         margin: 0;
     }
 
@@ -91,7 +92,7 @@ export const JuiceDescription = styled(motion.div)`
     & a:visited {
         text-decoration: none;
         color: #444;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 `
 

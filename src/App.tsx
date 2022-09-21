@@ -8,6 +8,7 @@ import Home from "./pages/Home"
 import Notepool from "./pages/Notepool"
 import Wikigraph from "./pages/Wikigraph"
 import Sqrl from "./pages/Sqrl"
+import Crossy from "./pages/Crossy"
 import theme from "./theme"
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
                     <ThemeProvider theme={theme}>
                         <Route path="/" exact component={Home} />
                         <Route path="/sqrl" exact component={Sqrl} />
+                        <Route path="/crossy" exact component={Crossy} />
                         <Route path="/hermes" exact component={Hermes} />
                         <Route path="/notepool" exact component={Notepool} />
                         <Route path="/wikigraph" exact component={Wikigraph} />

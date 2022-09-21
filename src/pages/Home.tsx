@@ -15,10 +15,13 @@ import {
 const AppComponent = styled(motion.div)`
     display: flex;
     width: 100%;
+    max-width: 30rem;
+    margin: auto;
     min-height: 100vh;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    padding: 4rem 1rem;
 `
 
 const Name = styled(motion.h1)`
@@ -47,12 +50,15 @@ const Title = styled(motion.div)`
 const ContactJuice = styled(motion.div)`
     display: flex;
     width: 100%;
+    /* justify-content: center; */
+    /* flex: 1; */
+    margin-left: -0.35rem;
 `
 
 const ContactLink = styled(External)`
     padding-left: 0.35rem;
     padding-right: 0.35rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 `
 // const Component = React.forwardRef((props: any, ref: any) => <Link ref={ref} />)
 
@@ -60,16 +66,19 @@ const ContactLink = styled(External)`
 
 const Home = () => {
     const projects = [
-        { title: "Sqrl", desc: "Coming soon", noMore: true },
+        { title: "Sqrl", desc: "A modern timetable planner for U of T" },
+        { title: "Crossy", desc: "Solving crosswords collaboratively" },
+        // { title: "", desc: "Solve crosswords collaboratively" },
+        // { title: "BinoculaRSS", desc: "" },
         { title: "Hermes", desc: "Delivering projects to clients" },
         { title: "Wikigraph", desc: "Representing Wikipedia with a graph" },
-        { title: "Notepool", desc: "Sharing notes with your class" },
+        // { title: "Notepool", desc: "Sharing notes with your class" },
     ]
     return (
         <div>
             <AppComponent initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <Name>Eamon Ma</Name>
-                <Title>React, Node, GraphQL</Title>
+                <Title>&ldquo;designer&rdquo;</Title>
                 <Section>
                     <SectionHeading>projects</SectionHeading>
                     {projects.map((project) => (
@@ -86,19 +95,20 @@ const Home = () => {
                             </JuiceDescription>
                             {/* {!project.noMore && ( */}
                             <MoreLink to={`/${project.title.toLowerCase()}`}>
-                                More
-                                <span
-                                    style={{
-                                        fontSize: "1rem",
-                                        position: "relative",
-                                        display: "inline-block",
-                                        bottom: "0.12rem",
-                                        left: "0.2rem",
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    &#9002;
-                                </span>
+                                {/* More */}
+                                {/* <span */}
+                                {/*     style={{ */}
+                                {/*         fontSize: "1rem", */}
+                                {/*         position: "relative", */}
+                                {/*         display: "inline-block", */}
+                                {/*         bottom: "0.12rem", */}
+                                {/*         left: "0.2rem", */}
+                                {/*         fontWeight: 600, */}
+                                {/*     }} */}
+                                {/* > */}
+                                {/*     &#9002; */}
+                                {/* </span> */}
+                →
                             </MoreLink>
                         </Juice>
                     ))}
@@ -106,19 +116,23 @@ const Home = () => {
                 <Section>
                     <SectionHeading>contact</SectionHeading>
                     <ContactJuice>
+                        <ContactLink href="https://github.com/eamonma">
+                            GitHub
+                        </ContactLink>
                         <ContactLink href="mailto:m@eamonma.com">
                             Email
                         </ContactLink>
                         <ContactLink href="https://instagram.com/eam.on">
                             Instagram
                         </ContactLink>
-                        <ContactLink href="https://github.com/eamonma">
-                            GitHub
-                        </ContactLink>
                         <ContactLink href="https://linkedin.com/in/eamonma">
                             LinkedIn
                         </ContactLink>
                     </ContactJuice>
+                </Section>
+                <Section>
+          <SectionHeading>Blog</SectionHeading>
+          <JuiceDescription>Coming soon&trade;</JuiceDescription>
                 </Section>
             </AppComponent>
         </div>
