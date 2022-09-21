@@ -41,7 +41,7 @@ const Wikigraph = (props: any) => {
                 for more information.
             </Elaboration>
             <External href="https://github.com/eamonma/wikigraph">
-                See on GitHub.
+                See on GitHub
             </External>
         </Project>
     )

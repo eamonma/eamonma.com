@@ -19,7 +19,7 @@ const Hermes = (props: any) => {
                 GraphQL, Node.js, and React.
             </Elaboration>
             <External href="https://github.com/eamonma/hermes">
-                See on GitHub.
+                See on GitHub
             </External>
             {/* Set width and height to prevent reflow */}
             <Image
