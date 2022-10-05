@@ -50,7 +50,7 @@ const Name = styled(motion.h1)`
     /*   } */
     /* } */
     ::before {
-      content: "/ˈeɪ̯mən/";
+      /* content: "/ˈeɪ̯mən/"; */
       font-family: "Times New Roman", serif;
       text-transform: none;
       font-size: 1.2rem;
@@ -62,8 +62,8 @@ const Name = styled(motion.h1)`
 `
 
 const Title = styled(motion.div)`
-    /* margin: 0 auto; */
-    margin-right: auto;
+    margin: 0 auto;
+    /* margin-right: auto; */
     color: #444;
     /* @media (prefers-color-scheme: dark) {
         color: #aaa;
