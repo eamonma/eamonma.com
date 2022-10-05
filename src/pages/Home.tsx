@@ -3,13 +3,13 @@ import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import {
-    External,
-    Juice,
-    JuiceDescription,
-    JuiceHeading,
-    MoreLink,
-    Section,
-    SectionHeading,
+  External,
+  Juice,
+  JuiceDescription,
+  JuiceHeading,
+  MoreLink,
+  Section,
+  SectionHeading,
 } from "../components/section"
 
 const AppComponent = styled(motion.div)`
@@ -35,10 +35,35 @@ const Name = styled(motion.h1)`
     font-size: 2.4rem;
     font-weight: 300;
     letter-spacing: 0.1rem;
+    position: relative;
+
+    /* display: */
+
+
+    /* .ipa { */
+    /*   display: inline-flex; */
+    /*   flex-direction: column; */
+
+    /*   & span:first-child { */
+    /*     font-family: "Times New Roman", serif; */
+    /*     text-transform: none; */
+    /*   } */
+    /* } */
+    ::before {
+      content: "/ˈeɪ̯mən/";
+      font-family: "Times New Roman", serif;
+      text-transform: none;
+      font-size: 1.2rem;
+      letter-spacing: 0;
+      position: absolute;
+      top: -1rem;
+      opacity: 0.5;
+    }
 `
 
 const Title = styled(motion.div)`
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    margin-right: auto;
     color: #444;
     /* @media (prefers-color-scheme: dark) {
         color: #aaa;
@@ -65,78 +90,81 @@ const ContactLink = styled(External)`
 // const Link = motion(Component)
 
 const Home = () => {
-    const projects = [
-        { title: "Sqrl", desc: "A modern timetable planner for U of T" },
-        { title: "Crossy", desc: "Solving crosswords collaboratively" },
-        // { title: "", desc: "Solve crosswords collaboratively" },
-        // { title: "BinoculaRSS", desc: "" },
-        { title: "Hermes", desc: "Delivering projects to clients" },
-        { title: "Wikigraph", desc: "Representing Wikipedia with a graph" },
-        // { title: "Notepool", desc: "Sharing notes with your class" },
-    ]
-    return (
+  const projects = [
+    { title: "Sqrl", desc: "A modern timetable planner for U of T" },
+    { title: "Crossy", desc: "Solving crosswords collaboratively" },
+    // { title: "", desc: "Solve crosswords collaboratively" },
+    // { title: "BinoculaRSS", desc: "" },
+    { title: "Hermes", desc: "Delivering projects to clients" },
+    { title: "Wikigraph", desc: "Representing Wikipedia with a graph" },
+    // { title: "Notepool", desc: "Sharing notes with your class" },
+  ]
+  return (
+    <div>
+      <AppComponent initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+
         <div>
-            <AppComponent initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <Name>Eamon Ma</Name>
-                <Title>&ldquo;designer&rdquo;</Title>
-                <Section>
-                    <SectionHeading>projects</SectionHeading>
-                    {projects.map((project) => (
-                        <Juice layout>
-                            <JuiceHeading layout layoutId={project.title}>
-                                <Link to={`/${project.title.toLowerCase()}`}>
-                                    {project.title}
-                                </Link>
-                            </JuiceHeading>
-                            <JuiceDescription layout layoutId={project.desc}>
-                                <Link to={`/${project.title.toLowerCase()}`}>
-                                    {project.desc}.{" "}
-                                </Link>
-                            </JuiceDescription>
-                            {/* {!project.noMore && ( */}
-                            <MoreLink to={`/${project.title.toLowerCase()}`}>
-                                {/* More */}
-                                {/* <span */}
-                                {/*     style={{ */}
-                                {/*         fontSize: "1rem", */}
-                                {/*         position: "relative", */}
-                                {/*         display: "inline-block", */}
-                                {/*         bottom: "0.12rem", */}
-                                {/*         left: "0.2rem", */}
-                                {/*         fontWeight: 600, */}
-                                {/*     }} */}
-                                {/* > */}
-                                {/*     &#9002; */}
-                                {/* </span> */}
+          <Name>Eamon Ma</Name>
+          <Title>&ldquo;designer&rdquo;</Title>
+        </div>
+        <Section>
+          <SectionHeading>projects</SectionHeading>
+          {projects.map((project) => (
+            <Juice layout>
+              <JuiceHeading layout layoutId={project.title}>
+                <Link to={`/${project.title.toLowerCase()}`}>
+                  {project.title}
+                </Link>
+              </JuiceHeading>
+              <JuiceDescription layout layoutId={project.desc}>
+                <Link to={`/${project.title.toLowerCase()}`}>
+                  {project.desc}.{" "}
+                </Link>
+              </JuiceDescription>
+              {/* {!project.noMore && ( */}
+              <MoreLink to={`/${project.title.toLowerCase()}`}>
+                {/* More */}
+                {/* <span */}
+                {/*     style={{ */}
+                {/*         fontSize: "1rem", */}
+                {/*         position: "relative", */}
+                {/*         display: "inline-block", */}
+                {/*         bottom: "0.12rem", */}
+                {/*         left: "0.2rem", */}
+                {/*         fontWeight: 600, */}
+                {/*     }} */}
+                {/* > */}
+                {/*     &#9002; */}
+                {/* </span> */}
                 →
-                            </MoreLink>
-                        </Juice>
-                    ))}
-                </Section>
-                <Section>
-                    <SectionHeading>contact</SectionHeading>
-                    <ContactJuice>
-                        <ContactLink href="https://github.com/eamonma">
-                            GitHub
-                        </ContactLink>
-                        <ContactLink href="mailto:m@eamonma.com">
-                            Email
-                        </ContactLink>
-                        <ContactLink href="https://instagram.com/eam.on">
-                            Instagram
-                        </ContactLink>
-                        <ContactLink href="https://linkedin.com/in/eamonma">
-                            LinkedIn
-                        </ContactLink>
-                    </ContactJuice>
-                </Section>
-                <Section>
+              </MoreLink>
+            </Juice>
+          ))}
+        </Section>
+        <Section>
+          <SectionHeading>contact</SectionHeading>
+          <ContactJuice>
+            <ContactLink href="https://github.com/eamonma">
+              GitHub
+            </ContactLink>
+            <ContactLink href="mailto:m@eamonma.com">
+              Email
+            </ContactLink>
+            <ContactLink href="https://instagram.com/eam.on">
+              Instagram
+            </ContactLink>
+            <ContactLink href="https://linkedin.com/in/eamonma">
+              LinkedIn
+            </ContactLink>
+          </ContactJuice>
+        </Section>
+        <Section>
           <SectionHeading>Blog</SectionHeading>
           <JuiceDescription>Coming soon&trade;</JuiceDescription>
-                </Section>
-            </AppComponent>
-        </div>
-    )
+        </Section>
+      </AppComponent>
+    </div>
+  )
 }
 
 export default Home

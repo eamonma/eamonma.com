@@ -30,7 +30,7 @@ Built with TypeScript, Next.js (React), Apollo GraphQL, Flask, and MongoDB for s
       </Elaboration>
       <Elaboration>
         <ParallelLinks>
-          <External href="https://github.com/eamonma/notepool">
+          <External href="https://github.com/sqrlplanner">
             See on GitHub
           </External>
           <External href="https://sqrlplanner.com">
