@@ -1,0 +1,5 @@
+[[redirects]]
+from = "https://eamonma.com/*"
+to = "https://eamon.ma/:splat"
+status = 301
+force = true
